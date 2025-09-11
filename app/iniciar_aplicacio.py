@@ -19,7 +19,6 @@ class IniciarAplicacio:
                     balance=-m.import_ if not movs else movs[-1].balance - m.import_,
                     banc="SIALP_PIAS"
                 ))
-        print(len(movs))
         return movs
         
     def execute(self):

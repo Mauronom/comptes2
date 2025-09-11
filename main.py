@@ -2,6 +2,8 @@ from infra import RepositoriMovimentsNorma43
 from infra import UITextualGrafica
 from infra import UIMatplotlib
 from infra import UIBokeh
+from infra import UIStreamlitGrafica
+from infra import UIFreeSimpleGUI
 from app import IniciarAplicacio
 from app import MostrarGraficaBalance
 from app import MostrarGraficaImports
@@ -13,7 +15,10 @@ if __name__ == "__main__":
     repositori = RepositoriMovimentsNorma43(directori="infra/dades")
     # ui_grafica = UIMatplotlib()
     ui_grafica = UIBokeh()
-    ui = UITextualGrafica(repositori)
+    #ui = UITextualGrafica(repositori)
+    #ui = UIStreamlitGrafica(repositori)
+    ui = UIFreeSimpleGUI(repositori)
+    
     cas_us_grafica_balance = MostrarGraficaBalance(ui_grafica)
     cas_us_grafica_imports = MostrarGraficaImports(ui_grafica)
     cas_us_filtrar_moviments = FiltrarMoviments(repositori,ui)
