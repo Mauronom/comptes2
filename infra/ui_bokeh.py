@@ -14,16 +14,16 @@ class UIBokeh:
 
         # Agrupar punts per banc
         per_banc = defaultdict(list)
-        for dt, balance, banc in punts:
+        for dt, balance, banc, concepte, import_ in punts:
             # Convertim Decimal -> float
-            per_banc[banc].append((dt, float(balance)))
+            per_banc[banc].append((dt, float(balance), concepte, float(import_)))
 
         # Crear la figura
         p = figure(
             x_axis_type="datetime",
             width=1800,
             height=900,
-            title="Evolució del balanç per banc",
+            title="Evolució per banc",
             tools="pan,wheel_zoom,box_zoom,reset,save"
         )
         p.xaxis.axis_label = etiqueta_x
@@ -34,8 +34,10 @@ class UIBokeh:
             punts_banc.sort(key=lambda p: p[0])
             x = [p[0] for p in punts_banc]
             y = [p[1] for p in punts_banc]
+            conceptes = [p[2] for p in punts_banc]
+            import_s = [p[3] for p in punts_banc]
 
-            source = ColumnDataSource(data={"x": x, "y": y, "banc": [banc]*len(x)})
+            source = ColumnDataSource(data={"x": x, "y": y, "banc": [banc]*len(x), "concepte": conceptes, "import_": import_s})
 
             p.line("x", "y", source=source, line_width=2, color=colors[i % len(colors)], legend_label=banc)
             p.circle("x", "y", source=source, size=6, color=colors[i % len(colors)], legend_label=banc)
@@ -44,6 +46,8 @@ class UIBokeh:
             tooltips=[
                 ("Data", "@x{%F %H:%M}"),
                 ("Balanç", "@y"),
+                ("Import", "@import_"),
+                ("Concepte", "@concepte"),
                 ("Banc", "@banc"),
             ],
             formatters={"@x": "datetime"},

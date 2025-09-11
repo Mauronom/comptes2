@@ -22,6 +22,7 @@ class MostrarGraficaImports:
                 totals[m.banc] = Decimal(0)
             totals[m.banc] += Decimal(m.import_)
             m.balance = totals[m.banc]
+            m.import_ = Decimal(m.import_)
         sorted_punts = calcular_punts(movs)
         dades = {
             "punts": sorted_punts,

@@ -15,8 +15,8 @@ class FakeRepositori:
         self.moviments = [
             Moviment(date(2025, 1, 1), "Sou",2000.0, 5000.0, "Banc A"),
             Moviment(date(2025, 1, 2), "Compra supermercat", -50.0, 4950.0, "Banc A"),
-            Moviment(date(2025, 1, 3), "PLAN UNI SEGUR", -100.0, 4850.0, "Banc B"),
-            Moviment(date(2025, 1, 4), "PLAN UNI SEGUR", -100.0, 4750.0, "Banc B"),
+            Moviment(date(2025, 1, 3), "PLAN AHORRO 5 SIALP", -100.0, 4850.0, "Banc B"),
+            Moviment(date(2025, 1, 4), "CI PIAS", -100.0, 4750.0, "Banc B"),
         ]
 
     def obtenir_tots(self):

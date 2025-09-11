@@ -12,7 +12,7 @@ class IniciarAplicacio:
     def afegir_moviments_ficticis(self, moviments):
         movs = Moviment.clone_list(self.extra_moves)
         for m in moviments:
-            if "PLAN UNI SEGUR" in m.concepte or "PLAN AHORRO 5 SIALP" in m.concepte or "CI PIAS" in m.concepte:
+            if "R/ Caja de Ingenieros Vida " in m.concepte or "PLAN AHORRO 5 SIALP" in m.concepte or "CI PIAS" in m.concepte:
                 movs.append(Moviment(
                     data=m.data,
                     concepte="SIALP PIES",

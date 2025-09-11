@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import datetime, time
-from domain import calcular_punts
+from domain import calcular_punts, Moviment
+from decimal import Decimal
 
 class MostrarGraficaBalance:
     """
@@ -13,8 +14,11 @@ class MostrarGraficaBalance:
         self._ui = ui
 
     def execute(self, moviments):
-        
-        sorted_punts = calcular_punts(moviments)
+        movs = Moviment.clone_list(moviments)
+        movs.sort(key=lambda m: (m.data, m.banc))
+        for m in movs:
+            m.import_ = Decimal(m.import_)
+        sorted_punts = calcular_punts(movs)
         dades = {
             "punts": sorted_punts,
             "etiqueta_x": "Data/Hora",
