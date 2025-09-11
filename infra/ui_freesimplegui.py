@@ -12,6 +12,8 @@ class UIFreeSimpleGUI:
         self._cas_us_filtrar_moviments = None
 
         # Definició de la interfície
+        sg.set_options(font=('Arial', 20))  # Nom de la font i mida
+
         layout = [
             [sg.Text("Filtre:"), sg.Input(key="-INPUT_FILTRE-", enable_events=True)],
             [sg.Button("Mostrar gràfica per balanç", key="-BTN_BALANCE-"),
@@ -25,10 +27,9 @@ class UIFreeSimpleGUI:
                       expand_y=True,
                       enable_events=True,
                       num_rows=15)],
-            [sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
+            #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
-
-        self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True)
+        self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True,size=(1200,600))
 
     def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments):
         self._cas_us_grafica_balance = cas_us_grafica_balance
