@@ -20,7 +20,7 @@ class FakeRepositori:
         ]
 
     def obtenir_tots(self):
-        return self.moviments.copy()
+        return Moviment.clone_list(self.moviments)
 
     def enriquir(self,movs):
         self.moviments.extend(movs)

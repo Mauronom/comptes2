@@ -13,8 +13,9 @@ class UITextualGrafica(App):
         self._repositori = repositori_moviments
         self._moviments = []
 
-    def set_casos_us(self, cas_us_grafica, cas_us_filtrar_moviments):
-        self._cas_us_grafica = cas_us_grafica
+    def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments):
+        self._cas_us_grafica_balance = cas_us_grafica_balance
+        self._cas_us_grafica_imports = cas_us_grafica_imports
         self._cas_us_filtrar_moviments = cas_us_filtrar_moviments
 
     def print(self,info):
@@ -35,7 +36,8 @@ class UITextualGrafica(App):
         yield Log(id="log")
         yield Header()
         yield Input(placeholder="Filtre", id="input_filtre")
-        yield Button("Mostrar gràfica", id="btn_grafica")
+        yield Button("Mostrar gràfica per balanç", id="btn_grafica_balance")
+        yield Button("Mostrar gràfica per imports", id="btn_grafica_imports")
         yield Container(DataTable(id="taula_moviments"))
         yield Footer()
 
@@ -48,8 +50,10 @@ class UITextualGrafica(App):
 
 
     async def on_button_pressed(self, event):
-        if event.button.id == "btn_grafica":
-            self._cas_us_grafica.execute(self._moviments)
+        if event.button.id == "btn_grafica_balance":
+            self._cas_us_grafica_balance.execute(self._moviments)
+        if event.button.id == "btn_grafica_imports":
+            self._cas_us_grafica_imports.execute(self._moviments)
 
     async def on_input_changed(self, event: Input.Changed):
         self._cas_us_filtrar_moviments.execute(event.value)

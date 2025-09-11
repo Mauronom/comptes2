@@ -14,7 +14,7 @@ class RepositoriMovimentsNorma43(RepositoriMoviments):
         self.moviments = self.llegir_moviments()
 
     def obtenir_tots(self):
-        return self.moviments.copy()
+        return Moviment.clone_list(self.moviments)
 
     def enriquir(self,movs):
         self.moviments.extend(movs)

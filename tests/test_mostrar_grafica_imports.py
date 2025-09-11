@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import Mock
 from datetime import date, datetime
 from domain import Moviment
-from app import MostrarGrafica
+from app import MostrarGraficaImports
 
 class FakeRepositori:
     def obtenir_tots(self):
@@ -17,10 +17,10 @@ def test_mostrar_grafica_converteix_moviments_a_punts_amb_banc():
     repositori = FakeRepositori()
     ui = Mock()
 
-    usecase = MostrarGrafica(ui)
+    usecase = MostrarGraficaImports(ui)
     usecase.execute(repositori.obtenir_tots())
 
-    assert ui.mostrar_grafica.call_count == 2
+    assert ui.mostrar_grafica.call_count == 1
     args, _ = ui.mostrar_grafica.call_args_list[0]
     dades = args[0]
 
@@ -31,30 +31,13 @@ def test_mostrar_grafica_converteix_moviments_a_punts_amb_banc():
         (datetime(2023, 1, 1, 0, 0, 0), 1200, "Total"),
         (datetime(2023, 1, 1, 1, 0, 0), 900, "TestBank"),
         (datetime(2023, 1, 1, 1, 0, 0), 1100, "Total"),
-        (datetime(2023, 1, 2, 0, 0, 0), 350, "TestBank"),
-        (datetime(2023, 1, 2, 0, 0, 0), 550, "Total"),
-    ]
-    assert dades["punts"] == esperats
-
-    # Els eixos han de ser coherents
-    assert dades["etiqueta_x"] == "Data/Hora"
-    assert dades["etiqueta_y"] == "Balanç"
-
-    args, _ = ui.mostrar_grafica.call_args_list[1]
-    dades = args[0]
-
-    # Els punts han de tenir datetime + balance + banc
-    esperats = [
-        (datetime(2023, 1, 1, 0, 0, 0), 200, "OtherBank"),
-        (datetime(2023, 1, 1, 0, 0, 0), 1000, "TestBank"),
-        (datetime(2023, 1, 1, 0, 0, 0), 1200, "Total"),
-        (datetime(2023, 1, 1, 1, 0, 0), 900, "TestBank"),
-        (datetime(2023, 1, 1, 1, 0, 0), 1100, "Total"),
-        (datetime(2023, 1, 2, 0, 0, 0), 350, "TestBank"),
-        (datetime(2023, 1, 2, 0, 0, 0), 550, "Total"),
+        (datetime(2023, 1, 2, 0, 0, 0), 400, "TestBank"),
+        (datetime(2023, 1, 2, 0, 0, 0), 600, "Total"),
     ]
     assert dades["punts"] == esperats
 
     # Els eixos han de ser coherents
     assert dades["etiqueta_x"] == "Data/Hora"
     assert dades["etiqueta_y"] == "Import Acumulat"
+
+    

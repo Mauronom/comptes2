@@ -1,3 +1,4 @@
 from .filtrar_moviments import FiltrarMoviments
 from .iniciar_aplicacio import IniciarAplicacio
-from .mostrar_grafica import MostrarGrafica
+from .mostrar_grafica_balance import MostrarGraficaBalance
+from .mostrar_grafica_imports import MostrarGraficaImports
