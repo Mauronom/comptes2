@@ -1,6 +1,5 @@
 from domain.moviment import Moviment
 import datetime
-from decimal import Decimal, ROUND_HALF_UP
 
 class IniciarAplicacio:
     def __init__(self, repositori_moviments, ui, extra_moves=[]):
@@ -16,8 +15,8 @@ class IniciarAplicacio:
                 movs.append(Moviment(
                     data=m.data,
                     concepte="SIALP PIES",
-                    import_=Decimal(-m.import_),
-                    balance=Decimal(-m.import_).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) if not movs else (Decimal(movs[-1].balance) + Decimal(-m.import_)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP),
+                    import_=-m.import_,
+                    balance=-m.import_ if not movs else movs[-1].balance - m.import_,
                     banc="SIALP_PIAS"
                 ))
         print(len(movs))

@@ -8,7 +8,6 @@ from app import MostrarGraficaImports
 from app import FiltrarMoviments
 from domain import Moviment
 import datetime
-from decimal import Decimal
 
 if __name__ == "__main__":
     repositori = RepositoriMovimentsNorma43(directori="infra/dades")
@@ -23,8 +22,8 @@ if __name__ == "__main__":
     cas_us_inici = IniciarAplicacio(repositori, ui, extra_moves=[Moviment(
                     data=datetime.date(2024, 8, 1),
                     concepte="SIALP PIES",
-                    import_=Decimal(0),
-                    balance=Decimal(17000),
+                    import_=0,
+                    balance=17000,
                     banc="SIALP_PIAS"
                 )])
     cas_us_inici.execute()
