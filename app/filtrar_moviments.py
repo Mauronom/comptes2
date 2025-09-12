@@ -23,8 +23,8 @@ class FiltrarMoviments:
         
         # Ordenar per data (ascendent)
         moviments.sort(key=lambda m: m.data)
-        
-        self._ui.mostrar_moviments(moviments)
+        total = sum(m.import_ for m in moviments)
+        self._ui.mostrar_moviments(moviments, total)
 
     def _filtrar_per_dates(self, moviments, data_inici: str, data_fi: str):
         """Filtra els moviments per rang de dates."""

@@ -30,9 +30,9 @@ class IniciarAplicacio:
         self._repositori.enriquir(movs)
         moviments = self._repositori.obtenir_tots()
         moviments = sorted(moviments, key=lambda m: (m.data,m.banc))
-
+        total = sum(m.import_ for m in moviments)
         # La UI hauria de tenir un mètode mostrar_moviments
-        self._ui.mostrar_moviments(moviments)
+        self._ui.mostrar_moviments(moviments, total)
         # Si és una UI Textual, llavors cridem run() per iniciar l'app
         if hasattr(self._ui, "run"):
             self._ui.run()

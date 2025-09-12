@@ -5,10 +5,12 @@ from app import IniciarAplicacio
 
 class FakeUI:
     def __init__(self):
-        self.moviments_mostrats = None
+        self.moviments_mostrats = []
+        self.total = 0
 
-    def mostrar_moviments(self, moviments):
+    def mostrar_moviments(self, moviments, total):
         self.moviments_mostrats = moviments
+        self.total = total
 
 class FakeRepositori:
     def __init__(self,):
@@ -48,6 +50,7 @@ class TestIniciarAplicacio(unittest.TestCase):
         self.assertEqual(ui.moviments_mostrats[5].import_, 100.0)
         self.assertEqual(ui.moviments_mostrats[5].banc, "SIALP_PIAS")
         self.assertEqual(ui.moviments_mostrats[5].balance, 200.0)
+        self.assertEqual(ui.total, 1950.0)
 
 if __name__ == "__main__":
     unittest.main()

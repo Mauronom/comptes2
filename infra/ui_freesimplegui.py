@@ -34,6 +34,7 @@ class UIFreeSimpleGUI:
                       expand_y=True,
                       enable_events=True,
                       num_rows=15)],
+            [sg.Text("Total: "), sg.Text("0.00", key="-Total-")],
             #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
         self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 600))
@@ -49,12 +50,16 @@ class UIFreeSimpleGUI:
         log = self.window["-LOG-"]
         log.update(log.get() + text)
 
-    def mostrar_moviments(self, moviments):
+    def mostrar_moviments(self, moviments, total):
         """Actualitza la taula amb els moviments."""
         self._moviments = moviments
         taula = self.window["-TAULA-"]
         dades = [[str(m.data), m.concepte, f"{m.import_:.2f}", m.balance, m.banc] for m in moviments]
         taula.update(values=dades)
+        w_total = self.window["-Total-"]
+        w_total.update(str(total))
+
+
 
     def _aplicar_filtres(self):
         """Aplica els filtres quan canvien les dates o el text."""
