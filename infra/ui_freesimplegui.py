@@ -4,7 +4,7 @@ from datetime import datetime
 class UIFreeSimpleGUI:
     """UI amb FreeSimpleGUI: taula, filtre, log i botons de gràfiques"""
 
-    def __init__(self, repositori_moviments):
+    def __init__(self, repositori_moviments, repositori_categories):
         import FreeSimpleGUI as sg
         self._repositori = repositori_moviments
         self._moviments = []
@@ -16,7 +16,8 @@ class UIFreeSimpleGUI:
         sg.set_options(font=('Arial', 20))  # Nom de la font i mida
 
         layout = [
-            [sg.Text("Filtre:"), sg.Input(key="-INPUT_FILTRE-", enable_events=True)],
+            [sg.Text("Filtre:"), sg.Input(key="-INPUT_FILTRE-", enable_events=True),
+             sg.Text("Categoria:"), sg.Combo(values=[], key="-COMBO_CATEGORIA-", enable_events=True, readonly=True, size=(15, 1))],
             [sg.Text("Data inici:"), 
              sg.Input(key="-DATA_INICI-", size=(12, 1), enable_events=True),
              sg.CalendarButton("📅", target="-DATA_INICI-", format="%Y-%m-%d", font=('Arial', 20)),
@@ -40,7 +41,9 @@ class UIFreeSimpleGUI:
             #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
         self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 600))
-
+        categories = list(repositori_categories.get_all().keys())+["Totes"]
+        self.window["-COMBO_CATEGORIA-"].update(values=categories, value="Totes")
+    
     def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments):
         self._cas_us_grafica_balance = cas_us_grafica_balance
         self._cas_us_grafica_imports = cas_us_grafica_imports
@@ -73,9 +76,10 @@ class UIFreeSimpleGUI:
             data_inici = self.window["-DATA_INICI-"].get().strip()
             data_fi = self.window["-DATA_FI-"].get().strip()
             filtre_text = self.window["-INPUT_FILTRE-"].get()
-            
+            categoria_seleccionada = self.window["-COMBO_CATEGORIA-"].get()
+
             # Cridem al cas d'ús amb tots els filtres
-            self._cas_us_filtrar_moviments.execute(filtre_text, data_inici, data_fi)
+            self._cas_us_filtrar_moviments.execute(filtre_text, data_inici, data_fi, categoria_seleccionada)
 
     def _validar_format_data(self, data_str):
         """Valida que la data tingui el format correcte YYYY-MM-DD."""
@@ -88,6 +92,7 @@ class UIFreeSimpleGUI:
             return False
 
     def run(self):
+        import FreeSimpleGUI as sg
         """Bucle principal de l'app PySimpleGUI."""
         while True:
             event, values = self.window.read()
@@ -111,5 +116,8 @@ class UIFreeSimpleGUI:
                 else:
                     # Opcional: mostrar missatge d'error
                     pass
+            elif event == "-COMBO_CATEGORIA-":
+                categoria_seleccionada = values["-COMBO_CATEGORIA-"]
+                self._aplicar_filtres()  # Crida al teu mètode de filtres
 
         self.window.close()

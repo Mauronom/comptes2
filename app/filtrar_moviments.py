@@ -6,7 +6,7 @@ class FiltrarMoviments:
         self._repositori = repositori
         self._ui = ui
 
-    def execute(self, text: str, data_inici: str = "", data_fi: str = ""):
+    def execute(self, text: str, data_inici: str = "", data_fi: str = "", categoria: str = "Totes"):
         """Filtra els moviments per concepte i dates, i actualitza la UI."""
         moviments = self._repositori.obtenir_tots()
         
@@ -16,6 +16,11 @@ class FiltrarMoviments:
             moviments = [
                 m for m in moviments
                 if text in m.concepte.lower()
+            ]
+        if categoria and categoria != "Totes":
+            moviments = [
+                m for m in moviments
+                if m.categoria == categoria
             ]
         # Convertir strings a objectes date
         date_inici = self._convertir_string_a_date(data_inici.strip())

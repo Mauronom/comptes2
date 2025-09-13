@@ -23,12 +23,13 @@ class FakeUI:
         print(str(info))
 
 
-def test_filtra_moviments_per_concepte():
+def test_filtra_moviments_per_concepte_i_categoria():
     # --- Arrange ---
     moviments = [
         Moviment(date(2023, 1, 1), "Neteja", 50.0, 100.0, "BancA"),
-        Moviment(date(2023, 1, 2), "Supermercat", 30.0, 70.0, "BancA"),
+        Moviment(date(2023, 1, 2), "Supermercat", 30.0, 70.0, "BancA",categoria="alimentació"),
         Moviment(date(2023, 1, 3), "Lloguer", 500.0, -430.0, "BancB"),
+        Moviment(date(2023, 1, 3), "Supermercat2", 500.0, -430.0, "BancB"),
     ]
     
     repo = FakeRepositori(moviments)
@@ -36,7 +37,7 @@ def test_filtra_moviments_per_concepte():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("super", "", "")
+    cas_us.execute("super", "", "", "alimentació")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 1
@@ -58,7 +59,7 @@ def test_filtra_moviments_buit_retorna_tots():
     ui = FakeUI()
     cas_us = FiltrarMoviments(repo, ui)
 
-    cas_us.execute("", "", "")
+    cas_us.execute("", "", "", "Totes")
 
     assert ui.moviments_mostrats == moviments
     assert ui.total == 100.0
@@ -79,7 +80,7 @@ def test_filtra_moviments_per_data_inici():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("", "2023-01-10", "")
+    cas_us.execute("", "2023-01-10", "", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 2
@@ -103,7 +104,7 @@ def test_filtra_moviments_per_data_fi():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("", "", "2023-01-20")
+    cas_us.execute("", "", "2023-01-20", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 2
@@ -127,7 +128,7 @@ def test_filtra_moviments_per_rang_dates():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("", "2023-01-10", "2023-02-05")
+    cas_us.execute("", "2023-01-10", "2023-02-05", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 2
@@ -152,7 +153,7 @@ def test_filtra_moviments_concepte_i_dates():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("super", "2023-01-10", "2023-02-10")
+    cas_us.execute("super", "2023-01-10", "2023-02-10", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 1
@@ -175,7 +176,7 @@ def test_filtra_moviments_dates_invalides_ignora_filtre():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act --- (dates amb format incorrecte)
-    cas_us.execute("", "01/01/2023", "15/01/2023")
+    cas_us.execute("", "01/01/2023", "15/01/2023", "Totes")
 
     # --- Assert --- (hauria de retornar tots els moviments)
     assert len(ui.moviments_mostrats) == 2
@@ -196,7 +197,7 @@ def test_filtra_moviments_data_inici_posterior_data_fi():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act --- (data inici posterior a data fi)
-    cas_us.execute("", "2023-01-20", "2023-01-10")
+    cas_us.execute("", "2023-01-20", "2023-01-10", "Totes")
 
     # --- Assert --- (no hauria de retornar cap moviment)
     assert len(ui.moviments_mostrats) == 0
@@ -217,7 +218,7 @@ def test_filtra_moviments_només_concepte_amb_dates_buides():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("super", "", "")
+    cas_us.execute("super", "", "", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 1
@@ -240,7 +241,7 @@ def test_moviments_filtrats_ordenats_per_data():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("", "2023-01-01", "2023-02-28")
+    cas_us.execute("", "2023-01-01", "2023-02-28", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 4
@@ -265,7 +266,7 @@ def test_moviments_filtrats_per_concepte_ordenats_per_data():
     cas_us = FiltrarMoviments(repo, ui)
 
     # --- Act ---
-    cas_us.execute("super", "", "")
+    cas_us.execute("super", "", "", "Totes")
 
     # --- Assert ---
     assert len(ui.moviments_mostrats) == 3

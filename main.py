@@ -16,7 +16,7 @@ if __name__ == "__main__":
     ui_grafica = UIBokeh()
     #ui = UITextualGrafica(repositori)
     #ui = UIStreamlitGrafica(repositori)
-    ui = UIFreeSimpleGUI(repositori)
+    ui = UIFreeSimpleGUI(repositori,repositori_cats)
     
     cas_us_grafica_balance = MostrarGraficaBalance(ui_grafica)
     cas_us_grafica_imports = MostrarGraficaImports(ui_grafica)
