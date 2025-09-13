@@ -35,8 +35,6 @@ class TestIniciarAplicacio(unittest.TestCase):
         cas_ús = IniciarAplicacio(repo, ui)
 
         cas_ús.execute()
-        for m in ui.moviments_mostrats:
-            print(m)
         self.assertIsNotNone(ui.moviments_mostrats)
         self.assertEqual(len(repo.moviments), 6)
         self.assertEqual(len(ui.moviments_mostrats), 6)
