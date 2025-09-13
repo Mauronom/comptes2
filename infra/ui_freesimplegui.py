@@ -26,7 +26,7 @@ class UIFreeSimpleGUI:
             [sg.Button("Mostrar gràfica per balanç", key="-BTN_BALANCE-"),
              sg.Button("Mostrar gràfica per imports", key="-BTN_IMPORTS-")],
             [sg.Table(values=[],
-                      headings=["Data", "Concepte", "Import (€)", "Balance", "Banc"],
+                      headings=["Data", "Concepte", "Import (€)", "Balance", "Banc", 'Categoria'],
                       auto_size_columns=True,
                       justification="left",
                       key="-TAULA-",
@@ -56,7 +56,7 @@ class UIFreeSimpleGUI:
         """Actualitza la taula amb els moviments."""
         self._moviments = moviments
         taula = self.window["-TAULA-"]
-        dades = [[str(m.data), m.concepte, f"{m.import_:.2f}", m.balance, m.banc] for m in moviments]
+        dades = [[str(m.data), m.concepte, f"{m.import_:.2f}", m.balance, m.banc, m.categoria] for m in moviments]
         taula.update(values=dades)
         w_total = self.window["-Total-"]
         w_total.update(str(total))

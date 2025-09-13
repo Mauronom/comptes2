@@ -3,6 +3,19 @@ from datetime import date
 from domain import Moviment
 from app import IniciarAplicacio
 
+
+class MemoryCategoriesRepo:
+    
+    def __init__(self, cats={}):
+        self.categories=cats
+    
+    def get_all(self,):
+        return self.categories
+
+    def find_by_name(self,name):
+        return self.categories[name]
+
+
 class FakeUI:
     def __init__(self):
         self.moviments_mostrats = []
@@ -29,12 +42,19 @@ class FakeRepositori:
     def enriquir(self,movs):
         self.moviments.extend(movs)
 
+    def save(self,movs):
+        self.moviments = Moviment.clone_list(movs)
 
 class TestIniciarAplicacio(unittest.TestCase):
     def test_execute_mostra_moviments(self):
         repo = FakeRepositori()
+        repo_cats = MemoryCategoriesRepo({
+            "ingrés": ["Sou"],
+            "alimentació": ["Compra supermercat"],
+            "estalvi": ["PLAN AHORRO 5 SIALP", "CI PIAS","SIALP PIES"],
+        })
         ui = FakeUI()
-        cas_ús = IniciarAplicacio(repo, ui)
+        cas_ús = IniciarAplicacio(repo, ui, repo_cats)
 
         cas_ús.execute()
         self.assertIsNotNone(ui.moviments_mostrats)
@@ -50,6 +70,12 @@ class TestIniciarAplicacio(unittest.TestCase):
         self.assertEqual(ui.moviments_mostrats[5].import_, 100.0)
         self.assertEqual(ui.moviments_mostrats[5].banc, "SIALP_PIAS")
         self.assertEqual(ui.moviments_mostrats[5].balance, 200.0)
+        self.assertEqual(ui.moviments_mostrats[0].categoria, "ingrés")
+        self.assertEqual(ui.moviments_mostrats[1].categoria, "alimentació")
+        self.assertEqual(ui.moviments_mostrats[2].categoria, "estalvi")
+        self.assertEqual(ui.moviments_mostrats[3].categoria, "estalvi")
+        self.assertEqual(ui.moviments_mostrats[4].categoria, "estalvi")
+        self.assertEqual(ui.moviments_mostrats[5].categoria, "estalvi")
         self.assertEqual(ui.total, 1950.0)
         self.assertEqual(ui.diari, 1950.0/5)
         self.assertEqual(ui.mensual, 30*1950.0/5)

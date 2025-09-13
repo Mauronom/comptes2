@@ -2,8 +2,9 @@ from domain import Moviment, calcular_stats
 import datetime
 
 class IniciarAplicacio:
-    def __init__(self, repositori_moviments, ui, extra_moves=[]):
+    def __init__(self, repositori_moviments, ui, repositori_cats, extra_moves=[]):
         self._repositori = repositori_moviments
+        self._repositori_cats = repositori_cats
         self._ui = ui
         self.extra_moves = extra_moves
         
@@ -20,6 +21,18 @@ class IniciarAplicacio:
                     banc="SIALP_PIAS"
                 ))
         return movs
+
+    def afegir_categories(self, moviments, repo_cats):
+        print('afegir_categories')
+        cats = repo_cats.get_all()
+        for m in moviments:
+            for cat in cats.keys():
+                texts = cats[cat]
+                for t in texts:
+                    if t in m.concepte:
+                        m.categoria = cat
+                        break
+        return moviments
         
     def execute(self):
         """
@@ -28,6 +41,9 @@ class IniciarAplicacio:
         moviments = self._repositori.obtenir_tots()
         movs = self.afegir_moviments_ficticis(moviments)
         self._repositori.enriquir(movs)
+        moviments = self._repositori.obtenir_tots()
+        movs = self.afegir_categories(moviments, self._repositori_cats)
+        self._repositori.save(movs)
         moviments = self._repositori.obtenir_tots()
         moviments = sorted(moviments, key=lambda m: (m.data,m.banc))
         

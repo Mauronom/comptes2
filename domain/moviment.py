@@ -10,6 +10,7 @@ class Moviment:
     import_: Union[Decimal, float, int, str]
     balance: Union[Decimal, float, int, str]
     banc: str
+    categoria: str = "altres"
 
     def __post_init__(self):
         # Convertir automàticament a Decimal
@@ -25,7 +26,8 @@ class Moviment:
             concepte=self.concepte,
             import_=self.import_,
             balance=self.balance,
-            banc=self.banc
+            banc=self.banc,
+            categoria=self.categoria
         )
     
     @staticmethod

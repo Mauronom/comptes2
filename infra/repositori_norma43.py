@@ -19,6 +19,9 @@ class RepositoriMovimentsNorma43(RepositoriMoviments):
     def enriquir(self,movs):
         self.moviments.extend(movs)
         
+    def save(self,movs):
+        self.moviments = Moviment.clone_list(movs)
+        
     def llegir_moviments(self):
         moviments = []
         for fitxer in os.listdir(self._directori):
