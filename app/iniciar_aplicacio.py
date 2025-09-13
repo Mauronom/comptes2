@@ -23,13 +23,12 @@ class IniciarAplicacio:
         return movs
 
     def afegir_categories(self, moviments, repo_cats):
-        print('afegir_categories')
         cats = repo_cats.get_all()
         for m in moviments:
             for cat in cats.keys():
                 texts = cats[cat]
                 for t in texts:
-                    if t in m.concepte:
+                    if t.lower() in m.concepte.lower():
                         m.categoria = cat
                         break
         return moviments

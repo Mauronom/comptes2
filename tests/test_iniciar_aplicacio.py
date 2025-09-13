@@ -38,7 +38,7 @@ class TestIniciarAplicacio(unittest.TestCase):
     def test_execute_mostra_moviments(self):
         repo = FakeRepositori()
         repo_cats = MemoryCategoriesRepo({
-            "ingrés": ["Sou"],
+            "ingrés": ["sou"],
             "alimentació": ["Compra supermercat"],
             "estalvi": ["PLAN AHORRO 5 SIALP", "CI PIAS","SIALP PIES"],
         })
