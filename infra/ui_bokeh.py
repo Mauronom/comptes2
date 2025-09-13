@@ -1,9 +1,10 @@
 from collections import defaultdict
-from bokeh.plotting import figure, show
-from bokeh.models import ColumnDataSource, HoverTool
 
 class UIBokeh:
     def mostrar_grafica(self, dades: dict):
+        from bokeh.plotting import figure, show
+        from bokeh.models import ColumnDataSource, HoverTool
+
         punts = dades["punts"]
         etiqueta_x = dades["etiqueta_x"]
         etiqueta_y = dades["etiqueta_y"]

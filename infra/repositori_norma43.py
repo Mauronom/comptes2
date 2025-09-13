@@ -1,7 +1,6 @@
 import os
 from domain import Moviment
 from domain import RepositoriMoviments
-from norma43parser import Norma43Parser, DateFormat
 
 class RepositoriMovimentsNorma43(RepositoriMoviments):
     """
@@ -9,6 +8,7 @@ class RepositoriMovimentsNorma43(RepositoriMoviments):
     """
 
     def __init__(self, directori="infra/dades"):
+        from norma43parser import Norma43Parser, DateFormat
         self._directori = directori
         self._parser = Norma43Parser(DateFormat.ENGLISH)  # Utilitza AAAAMMDD
         self.moviments = self.llegir_moviments()

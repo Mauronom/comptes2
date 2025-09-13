@@ -2,18 +2,7 @@ import unittest
 from datetime import date
 from domain import Moviment
 from app import IniciarAplicacio
-
-
-class MemoryCategoriesRepo:
-    
-    def __init__(self, cats={}):
-        self.categories=cats
-    
-    def get_all(self,):
-        return self.categories
-
-    def find_by_name(self,name):
-        return self.categories[name]
+from infra import MemoryCategoriesRepo
 
 
 class FakeUI:

@@ -1,4 +1,3 @@
-import FreeSimpleGUI as sg
 from datetime import datetime
 
 
@@ -6,6 +5,7 @@ class UIFreeSimpleGUI:
     """UI amb FreeSimpleGUI: taula, filtre, log i botons de gràfiques"""
 
     def __init__(self, repositori_moviments):
+        import FreeSimpleGUI as sg
         self._repositori = repositori_moviments
         self._moviments = []
         self._cas_us_grafica_balance = None
