@@ -10,6 +10,7 @@ class UIFreeSimpleGUI:
         self._moviments = []
         self._cas_us_grafica_balance = None
         self._cas_us_grafica_imports = None
+        self._cas_us_grafica_categories = None
         self._cas_us_filtrar_moviments = None
 
         # Definició de la interfície
@@ -25,9 +26,10 @@ class UIFreeSimpleGUI:
              sg.Input(key="-DATA_FI-", size=(12, 1), enable_events=True),
              sg.CalendarButton("📅", target="-DATA_FI-", format="%Y-%m-%d", font=('Arial', 20))],
             [sg.Button("Mostrar gràfica per balanç", key="-BTN_BALANCE-"),
-             sg.Button("Mostrar gràfica per imports", key="-BTN_IMPORTS-")],
+             sg.Button("Mostrar gràfica per imports", key="-BTN_IMPORTS-"),
+             sg.Button("Mostrar gràfica per categories", key="-BTN_CATEGORIES-")],
             [sg.Table(values=[],
-                      headings=["Data", "Concepte", "Import (€)", "Balance", "Banc", 'Categoria'],
+                      headings=["Data", "Concepte", "Import (€)", "Balanç", "Banc", 'Categoria'],
                       auto_size_columns=True,
                       justification="left",
                       key="-TAULA-",
@@ -41,13 +43,14 @@ class UIFreeSimpleGUI:
             #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
         self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 600))
-        categories = list(repositori_categories.get_all().keys())+["Totes"]
+        categories = list(repositori_categories.get_all().keys())+["altres","Totes"]
         self.window["-COMBO_CATEGORIA-"].update(values=categories, value="Totes")
     
-    def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments):
+    def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments, cas_us_grafica_categories):
         self._cas_us_grafica_balance = cas_us_grafica_balance
         self._cas_us_grafica_imports = cas_us_grafica_imports
         self._cas_us_filtrar_moviments = cas_us_filtrar_moviments
+        self._cas_us_grafica_categories = cas_us_grafica_categories
 
     def print(self, info):
         """Escriu al log (equivalent al print de Textual)."""
@@ -104,7 +107,8 @@ class UIFreeSimpleGUI:
 
             elif event == "-BTN_IMPORTS-" and self._cas_us_grafica_imports:
                 self._cas_us_grafica_imports.execute(self._moviments)
-
+            elif event == "-BTN_CATEGORIES-" and self._cas_us_grafica_categories:
+                self._cas_us_grafica_categories.execute(self._moviments)
             elif event in ["-INPUT_FILTRE-", "-DATA_INICI-", "-DATA_FI-"]:
                 # Validem les dates abans d'aplicar els filtres
                 data_inici = values.get("-DATA_INICI-", "").strip()

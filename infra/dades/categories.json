@@ -1,7 +1,8 @@
 {
   "nomina": [
-    "nomina",
-    "coneptum"
+    "nomin",
+    "coneptum",
+    "prestacion"
   ],
   "gas": [
     "comercializadora regulada, gas"
@@ -222,9 +223,10 @@
     "transf ",
     "bizum"
   ],
-  "lloguer": [
+  "habitatge": [
     "traspas a: gemma manich ",
-    "HIPOTECA"
+    "HIPOTECA",
+    "amortiz"
   ],
   "compra": [
     "corte ingles",

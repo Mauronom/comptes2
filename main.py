@@ -5,6 +5,7 @@ from infra import UIFreeSimpleGUI
 from app import IniciarAplicacio
 from app import MostrarGraficaBalance
 from app import MostrarGraficaImports
+from app import MostrarGraficaCategories
 from app import FiltrarMoviments
 from domain import Moviment
 import datetime
@@ -20,8 +21,9 @@ if __name__ == "__main__":
     
     cas_us_grafica_balance = MostrarGraficaBalance(ui_grafica)
     cas_us_grafica_imports = MostrarGraficaImports(ui_grafica)
+    cas_us_grafica_categories = MostrarGraficaCategories(ui_grafica)
     cas_us_filtrar_moviments = FiltrarMoviments(repositori,ui)
-    ui.set_casos_us(cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments)
+    ui.set_casos_us(cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments, cas_us_grafica_categories)
     # cas_us_inici = IniciarAplicacio(repositori, ui)
     cas_us_inici = IniciarAplicacio(repositori, ui, repositori_cats, extra_moves=[Moviment(
                     data=datetime.date(2024, 8, 1),
