@@ -13,9 +13,12 @@ class FakeUI:
     def __init__(self):
         self.moviments_mostrats = []
         self.total = 0
-    def mostrar_moviments(self, movs, total):
+    def mostrar_moviments(self, movs, total, diari, mensual):
         self.moviments_mostrats = movs
         self.total = total
+        self.diari = diari
+        self.mensual = mensual
+
     def print(self, info):
         print(str(info))
 
@@ -39,12 +42,16 @@ def test_filtra_moviments_per_concepte():
     assert len(ui.moviments_mostrats) == 1
     assert ui.moviments_mostrats[0].concepte == "Supermercat"
     assert ui.total == 30.0
+    assert ui.diari == 30.0
+    assert ui.mensual == 30*30.0
+    
 
 
 def test_filtra_moviments_buit_retorna_tots():
     moviments = [
         Moviment(date(2023, 1, 1), "Neteja", 50.0, 100.0, "BancA"),
         Moviment(date(2023, 1, 2), "Supermercat", 30.0, 70.0, "BancA"),
+        Moviment(date(2023, 1, 2), "Sou", 20.0, 70.0, "BancB"),
     ]
 
     repo = FakeRepositori(moviments)
@@ -54,8 +61,10 @@ def test_filtra_moviments_buit_retorna_tots():
     cas_us.execute("", "", "")
 
     assert ui.moviments_mostrats == moviments
-    assert ui.total == 80.0
-
+    assert ui.total == 100.0
+    assert ui.diari == 100.0/2
+    assert ui.mensual == 30*100.0/2
+    
 
 def test_filtra_moviments_per_data_inici():
     # --- Arrange ---
@@ -77,7 +86,9 @@ def test_filtra_moviments_per_data_inici():
     assert ui.moviments_mostrats[0].data == date(2023, 1, 15)
     assert ui.moviments_mostrats[1].data == date(2023, 2, 1)
     assert ui.total == 530.0
-
+    assert ui.diari == round(530.0/23,2)
+    assert ui.mensual == round(30*530.0/23,2)
+    
 
 def test_filtra_moviments_per_data_fi():
     # --- Arrange ---
@@ -99,7 +110,9 @@ def test_filtra_moviments_per_data_fi():
     assert ui.moviments_mostrats[0].data == date(2023, 1, 1)
     assert ui.moviments_mostrats[1].data == date(2023, 1, 15)
     assert ui.total == 80.0
-
+    assert ui.diari == round(80.0/20,2)
+    assert ui.mensual == round(30*80.0/20,2)
+    
 def test_filtra_moviments_per_rang_dates():
     # --- Arrange ---
     moviments = [
@@ -121,6 +134,9 @@ def test_filtra_moviments_per_rang_dates():
     assert ui.moviments_mostrats[0].data == date(2023, 1, 15)
     assert ui.moviments_mostrats[1].data == date(2023, 2, 1)
     assert ui.total == 530.0
+    assert ui.diari == round(530.0/27, 2)
+    assert ui.mensual == round(30*530.0/27, 2)
+    
 
 def test_filtra_moviments_concepte_i_dates():
     # --- Arrange ---
@@ -143,6 +159,9 @@ def test_filtra_moviments_concepte_i_dates():
     assert ui.moviments_mostrats[0].concepte == "Supermercat"
     assert ui.moviments_mostrats[0].data == date(2023, 1, 15)
     assert ui.total == 30.0
+    assert ui.diari == round(30.0/32,2)
+    assert ui.mensual == round(30*30.0/32,2)
+    
 
 def test_filtra_moviments_dates_invalides_ignora_filtre():
     # --- Arrange ---
@@ -161,6 +180,9 @@ def test_filtra_moviments_dates_invalides_ignora_filtre():
     # --- Assert --- (hauria de retornar tots els moviments)
     assert len(ui.moviments_mostrats) == 2
     assert ui.total == 80.0
+    assert ui.diari == round(80.0/15, 2)
+    assert ui.mensual == round(30*80.0/15,2)
+    
 
 def test_filtra_moviments_data_inici_posterior_data_fi():
     # --- Arrange ---
@@ -179,6 +201,9 @@ def test_filtra_moviments_data_inici_posterior_data_fi():
     # --- Assert --- (no hauria de retornar cap moviment)
     assert len(ui.moviments_mostrats) == 0
     assert ui.total == 0.0
+    assert ui.diari == 0.0
+    assert ui.mensual == 0.0
+    
 
 def test_filtra_moviments_només_concepte_amb_dates_buides():
     # --- Arrange ---
@@ -198,6 +223,8 @@ def test_filtra_moviments_només_concepte_amb_dates_buides():
     assert len(ui.moviments_mostrats) == 1
     assert ui.moviments_mostrats[0].concepte == "Supermercat"
     assert ui.total == 30.0
+    assert ui.diari == 30.0
+    assert ui.mensual == 30*30.0
 
 def test_moviments_filtrats_ordenats_per_data():
     # --- Arrange --- (moviments desordenats intencionalment)
@@ -221,6 +248,8 @@ def test_moviments_filtrats_ordenats_per_data():
     dates = [m.data for m in ui.moviments_mostrats]
     assert dates == [date(2023, 1, 1), date(2023, 1, 15), date(2023, 2, 1), date(2023, 2, 15)]
     assert ui.total == 620.0
+    assert ui.diari == round(620.0/59, 2)
+    assert ui.mensual == round(30*620.0/59, 2)
 
 def test_moviments_filtrats_per_concepte_ordenats_per_data():
     # --- Arrange --- (moviments amb mateix concepte però dates desordenades)
@@ -247,3 +276,5 @@ def test_moviments_filtrats_per_concepte_ordenats_per_data():
     for moviment in ui.moviments_mostrats:
         assert "supermercat" in moviment.concepte.lower()
     assert ui.total == 95.0
+    assert ui.diari == round(95.0/42, 2)
+    assert ui.mensual == round(30*95.0/42, 2)

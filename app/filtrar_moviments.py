@@ -17,25 +17,31 @@ class FiltrarMoviments:
                 m for m in moviments
                 if text in m.concepte.lower()
             ]
-
-        # Aplicar filtres de data
-        moviments = self._filtrar_per_dates(moviments, data_inici, data_fi)
-        
-        # Ordenar per data (ascendent)
-        moviments.sort(key=lambda m: m.data)
-        total = sum(m.import_ for m in moviments)
-        self._ui.mostrar_moviments(moviments, total)
-
-    def _filtrar_per_dates(self, moviments, data_inici: str, data_fi: str):
-        """Filtra els moviments per rang de dates."""
         # Convertir strings a objectes date
         date_inici = self._convertir_string_a_date(data_inici.strip())
         date_fi = self._convertir_string_a_date(data_fi.strip())
         
+        # Aplicar filtres de data
+        moviments = self._filtrar_per_dates(moviments, date_inici, date_fi)
+        
+        # Ordenar per data (ascendent)
+        moviments.sort(key=lambda m: m.data)
+        print(moviments)
+        total = float(sum(m.import_ for m in moviments))
+        d_ini = min(moviments[0].data,date_inici) if date_inici and moviments else moviments[0].data if moviments else None
+        d_fi = max(moviments[-1].data,date_fi) if date_fi and moviments else moviments[-1].data if moviments else None
+        dies_diferents = 0
+        if d_ini and d_fi:
+            dies_diferents = (d_fi - d_ini).days + 1 if moviments else 0
+        diari = total / dies_diferents if dies_diferents > 0 else 0
+        mensual = diari * 30
+        self._ui.mostrar_moviments(moviments, total, round(diari,2), round(mensual,2))
+
+    def _filtrar_per_dates(self, moviments, date_inici: date, date_fi: date):
+        """Filtra els moviments per rang de dates."""
+        
         # Si les dates no són vàlides, retornar tots els moviments
-        if data_inici.strip() and date_inici is None:
-            return moviments
-        if data_fi.strip() and date_fi is None:
+        if not date_inici and not date_fi:
             return moviments
             
         # Si data inici és posterior a data fi, retornar llista buida

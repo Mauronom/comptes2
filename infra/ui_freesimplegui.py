@@ -34,7 +34,9 @@ class UIFreeSimpleGUI:
                       expand_y=True,
                       enable_events=True,
                       num_rows=15)],
-            [sg.Text("Total: "), sg.Text("0.00", key="-Total-")],
+            [sg.Text("Total: "), sg.Text("0.00", key="-Total-"),
+             sg.Text("Diari: "), sg.Text("0.00", key="-Diari-"),
+             sg.Text("Mensual: "), sg.Text("0.00", key="-Mensual-")],
             #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
         self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 600))
@@ -50,7 +52,7 @@ class UIFreeSimpleGUI:
         log = self.window["-LOG-"]
         log.update(log.get() + text)
 
-    def mostrar_moviments(self, moviments, total):
+    def mostrar_moviments(self, moviments, total, diari, mensual):
         """Actualitza la taula amb els moviments."""
         self._moviments = moviments
         taula = self.window["-TAULA-"]
@@ -58,6 +60,10 @@ class UIFreeSimpleGUI:
         taula.update(values=dades)
         w_total = self.window["-Total-"]
         w_total.update(str(total))
+        w_diari = self.window["-Diari-"]
+        w_diari.update(str(diari))
+        w_mensual = self.window["-Mensual-"]
+        w_mensual.update(str(mensual))
 
 
 

@@ -8,9 +8,11 @@ class FakeUI:
         self.moviments_mostrats = []
         self.total = 0
 
-    def mostrar_moviments(self, moviments, total):
+    def mostrar_moviments(self, moviments, total, diari, mensual):
         self.moviments_mostrats = moviments
         self.total = total
+        self.diari = diari
+        self.mensual = mensual
 
 class FakeRepositori:
     def __init__(self,):
@@ -18,7 +20,7 @@ class FakeRepositori:
             Moviment(date(2025, 1, 1), "Sou",2000.0, 5000.0, "Banc A"),
             Moviment(date(2025, 1, 2), "Compra supermercat", -50.0, 4950.0, "Banc A"),
             Moviment(date(2025, 1, 3), "PLAN AHORRO 5 SIALP", -100.0, 4850.0, "Banc B"),
-            Moviment(date(2025, 1, 4), "CI PIAS", -100.0, 4750.0, "Banc B"),
+            Moviment(date(2025, 1, 5), "CI PIAS", -100.0, 4750.0, "Banc B"),
         ]
 
     def obtenir_tots(self):
@@ -49,6 +51,10 @@ class TestIniciarAplicacio(unittest.TestCase):
         self.assertEqual(ui.moviments_mostrats[5].banc, "SIALP_PIAS")
         self.assertEqual(ui.moviments_mostrats[5].balance, 200.0)
         self.assertEqual(ui.total, 1950.0)
+        self.assertEqual(ui.diari, 1950.0/5)
+        self.assertEqual(ui.mensual, 30*1950.0/5)
+
+
 
 if __name__ == "__main__":
     unittest.main()

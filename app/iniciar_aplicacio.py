@@ -31,8 +31,12 @@ class IniciarAplicacio:
         moviments = self._repositori.obtenir_tots()
         moviments = sorted(moviments, key=lambda m: (m.data,m.banc))
         total = sum(m.import_ for m in moviments)
+        dies_diferents = (moviments[-1].data - moviments[0].data).days + 1 if moviments else 0
+        print(dies_diferents)
+        diari = total / dies_diferents if dies_diferents > 0 else 0
+        mensual = diari * 30
         # La UI hauria de tenir un mètode mostrar_moviments
-        self._ui.mostrar_moviments(moviments, total)
+        self._ui.mostrar_moviments(moviments, total, round(diari,2), round(mensual,2))
         # Si és una UI Textual, llavors cridem run() per iniciar l'app
         if hasattr(self._ui, "run"):
             self._ui.run()
