@@ -18,22 +18,29 @@
     "vodafone"
   ],
   "salut": [
-    "mutua general",
+    "mutua",
     "farmacia",
     "belodonte",
     "iqeo",
     "farmacia",
     "psico",
-    "fcia."
+    "fcia.",
+    "PLAN uni seguro",
+    "allianz",
+    "llevadona",
+    "mamayoga"
   ],
   "impost": [
     "impuesto",
     "pagament hisenda",
-    "ajunt bcn serv recapt"
+    "ajunt bcn serv recapt",
+    "ajuntament de barcelona"
   ],
   "cotxe": [
     "banco cetelem",
-    "insurance europe"
+    "insurance europe",
+    "garatge",
+    "aparcamiento"
   ],
   "peatge": [
     "tunels",
@@ -85,18 +92,24 @@
     "l obrador prades",
     "consum",
     "fruites",
-    "el nacional. barres"
+    "el nacional. barres",
+    "naturafruits",
+    "agrobotiga"
   ],
   "neteja_casa": [
     "cotizacion 138 reg.gral",
     "mari carme"
   ],
-  "escacs": [
+  "oci": [
     "escacs",
     "inscripcio torneig",
-    "peons "
-  ],
-  "restaurant": [
+    "peons ",
+    "esperanto",
+    "prime",
+    "filmin",
+    "disney",
+    "garantiaplus",
+    "domestic and general insurance",
     "restaurante",
     "santamassa",
     "ok sarria",
@@ -160,7 +173,11 @@
     "antic teatre",
     "mcdonald",
     "la trini",
-    "muccis"
+    "muccis",
+    "rouras",
+    "sotavent",
+    "sandwichez",
+    "timesburg"
   ],
   "dinar_feina": [
     "lucania",
@@ -207,12 +224,6 @@
     "bicing",
     "metro"
   ],
-  "tv": [
-    "prime",
-    "filmin",
-    "disney",
-    "garantiaplus"
-  ],
   "efectiu": [
     "caixer",
     "cajero",
@@ -226,7 +237,13 @@
   "habitatge": [
     "traspas a: gemma manich ",
     "HIPOTECA",
-    "amortiz"
+    "amortiz",
+    "comunitat",
+    "fincas layes",
+    "caser",
+    "taskrabbi",
+    "dalmalum",
+    "dalmau"
   ],
   "compra": [
     "corte ingles",
@@ -276,6 +293,16 @@
     "bauhaus",
     "ferreteria",
     "espectarama",
-    "mapa 3"
-  ]
+    "mapa 3",
+    "fotoprix",
+    "textil",
+    "casa del libro",
+    "santagloria",
+    "kiabi",
+    "illa diagonal",
+    "womensecret",
+    "zeeman",
+    "el mejor precio"
+  ],
+  "estalvi":["SIALP","Vida S.A","PIAS"]
 }

@@ -16,14 +16,17 @@ class MostrarGraficaCategories:
     def execute(self, moviments):
         movs = Moviment.clone_list(moviments)
         despeses = {}
-        estalvi = Decimal(0.0)
         for m in movs:
-            estalvi += m.import_
+            if m.import_ < 0:
+                key = m.categoria
+                if key not in despeses:
+                    despeses[key] = Decimal(0.0)
+                despeses[key] += m.import_
+        for m in movs:
             key = m.categoria
-            if key not in despeses:
-                despeses[key] = Decimal(0.0)
-            despeses[key] += m.import_
+            if m.import_ > 0 and key in despeses:
+                despeses[key] += m.import_
         for d in despeses:
             despeses[d] = float(despeses[d])
-        self._ui.mostrar_grafica_categories(despeses, float(estalvi))
+        self._ui.mostrar_grafica_categories(despeses)
         

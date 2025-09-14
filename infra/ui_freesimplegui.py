@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from domain import Moviment
 
 class UIFreeSimpleGUI:
     """UI amb FreeSimpleGUI: taula, filtre, log i botons de gràfiques"""
@@ -36,13 +36,22 @@ class UIFreeSimpleGUI:
                       expand_x=True,
                       expand_y=True,
                       enable_events=True,
-                      num_rows=15)],
+                      num_rows=8)],
+            [sg.Table(values=[],
+                      headings=["Data", "Concepte", "Import (€)", "Balanç", "Banc", 'Categoria'],
+                      auto_size_columns=True,
+                      justification="left",
+                      key="-TAULA2-",
+                      expand_x=True,
+                      expand_y=True,
+                      enable_events=True,
+                      num_rows=8)],
             [sg.Text("Total: "), sg.Text("0.00", key="-Total-"),
              sg.Text("Diari: "), sg.Text("0.00", key="-Diari-"),
              sg.Text("Mensual: "), sg.Text("0.00", key="-Mensual-")],
             #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
-        self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 600))
+        self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 700))
         categories = list(repositori_categories.get_all().keys())+["altres","Totes"]
         self.window["-COMBO_CATEGORIA-"].update(values=categories, value="Totes")
     
@@ -63,6 +72,11 @@ class UIFreeSimpleGUI:
         self._moviments = moviments
         taula = self.window["-TAULA-"]
         dades = [[str(m.data), m.concepte, f"{m.import_:.2f}", m.balance, m.banc, m.categoria] for m in moviments]
+        taula.update(values=dades)
+        taula = self.window["-TAULA2-"]
+        moviments2 = Moviment.clone_list(moviments)
+        moviments2 = sorted(moviments2, key=lambda m: (m.import_,m.data))
+        dades = [[str(m.data), m.concepte, f"{m.import_:.2f}", m.balance, m.banc, m.categoria] for m in moviments2]
         taula.update(values=dades)
         w_total = self.window["-Total-"]
         w_total.update(str(total))

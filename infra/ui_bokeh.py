@@ -66,7 +66,7 @@ class UIBokeh:
 
         show(p)
     
-    def mostrar_grafica_categories(self, despeses_dict, estalvi, titol="Distribució d'Ingressos i Despeses", 
+    def mostrar_grafica_categories(self, despeses_dict, titol="Distribució de Despeses", 
                                width=400, height=400):
         """
         Genera un diagrama circular amb les despeses (valors negatius) i ingressos (valor positiu)
@@ -91,10 +91,7 @@ class UIBokeh:
         
         # Convertir despeses a valors positius per al càlcul de percentatges
         despeses_positives = {k: abs(v) for k, v in despeses_dict.items()}
-        
-        # Afegir ingressos
-        data['Estalvi'] = estalvi if estalvi > 0 else 0.0
-        
+                
         # Afegir despeses
         data.update(despeses_positives)
         
