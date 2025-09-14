@@ -243,7 +243,8 @@
     "caser",
     "taskrabbi",
     "dalmalum",
-    "dalmau"
+    "dalmau",
+    "lex mercatoria"
   ],
   "compra": [
     "corte ingles",
@@ -303,6 +304,12 @@
     "womensecret",
     "zeeman",
     "el mejor precio"
+  ],
+  "targeta":[
+    "credito tarjeta"
+  ],
+  "funeraria": [
+    "serv.fun"
   ],
   "estalvi":["SIALP","Vida S.A","PIAS"]
 }
