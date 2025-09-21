@@ -20,7 +20,5 @@ class MostrarGraficaBalance:
             "etiqueta_x": "Data/Hora",
             "etiqueta_y": "Balanç",
         }
-        for d in dades["punts"]:
-            print(d)
         self._ui.mostrar_grafica(dades)
         

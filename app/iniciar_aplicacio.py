@@ -4,7 +4,7 @@ import datetime
 
 class IniciarAplicacio:
     def __init__(self, repositori_moviments, ui, repositori_cats, 
-                 repositori_config_ficticis: ConfigMovimentsFicticisRepo = None, 
+                 repositori_config_ficticis: ConfigMovimentsFicticisRepo, 
                  extra_moves=[]):
         self._repositori = repositori_moviments
         self._repositori_cats = repositori_cats
@@ -20,21 +20,21 @@ class IniciarAplicacio:
             return movs
             
         regles = self._repositori_config_ficticis.get_regles()
-        
-        for m in moviments:
-            for regla in regles:
-                if self._coincideix_patrons(m.concepte, regla.patrons):
-                    import_final = -m.import_ if regla.invertir_import else m.import_
-                    balance_final = import_final if not movs else movs[-1].balance + import_final
-                    
-                    movs.append(Moviment(
-                        data=m.data,
-                        concepte=regla.concepte_desti,
-                        import_=import_final,
-                        balance=balance_final,
-                        banc=regla.banc_desti
-                    ))
-                    break  # Només aplica la primera regla que coincideixi
+        if regles:
+            for m in moviments:
+                for regla in regles:
+                    if self._coincideix_patrons(m.concepte, regla.patrons):
+                        import_final = -m.import_ if regla.invertir_import else m.import_
+                        balance_final = import_final if not movs else movs[-1].balance + import_final
+                        
+                        movs.append(Moviment(
+                            data=m.data,
+                            concepte=regla.concepte_desti,
+                            import_=import_final,
+                            balance=balance_final,
+                            banc=regla.banc_desti
+                        ))
+                        break  # Només aplica la primera regla que coincideixi
         
         return movs
     
@@ -64,8 +64,10 @@ class IniciarAplicacio:
         moviments = self._repositori.obtenir_tots()
 
         # 3️⃣ Afegir moviments ficticis
+        print(f"Moviments originals: {len(moviments)}")
         movs = self.afegir_moviments_ficticis(moviments)
         self._repositori.enriquir(movs)
+        print(f"Moviments després d'afegir ficticis: {len(self._repositori.obtenir_tots())}")
 
         # 4️⃣ Afegir categories
         moviments = self._repositori.obtenir_tots()

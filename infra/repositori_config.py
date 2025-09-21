@@ -7,7 +7,7 @@ from domain import ConfigMovimentsFicticisRepo, ReglaMovimentFictici
 
 
 class JsonConfigMovimentsFicticisRepo(ConfigMovimentsFicticisRepo):
-    def __init__(self, config_path: str = "config.json"):
+    def __init__(self, config_path):
         self.config_path = config_path
     
     def get_regles(self) -> List[ReglaMovimentFictici]:
@@ -25,6 +25,7 @@ class JsonConfigMovimentsFicticisRepo(ConfigMovimentsFicticisRepo):
                 ))
             return regles
         except FileNotFoundError:
+            print(f"Warning: Config file {self.config_path} not found. No fictitious movement rules loaded.")
             return []
 
 class MemoryConfigMovimentsFicticisRepo(ConfigMovimentsFicticisRepo):

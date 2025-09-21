@@ -102,7 +102,7 @@ class TestIniciarAplicacio(unittest.TestCase):
         repo = FakeRepositori()
         repo_cats = MemoryCategoriesRepo({})
         ui = FakeUI()
-        cas_ús = IniciarAplicacio(repo, ui, repo_cats)  # Sense repositori config
+        cas_ús = IniciarAplicacio(repo, ui, repo_cats, None)  # Sense repositori config
 
         cas_ús.execute()
 
