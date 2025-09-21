@@ -12,11 +12,15 @@ class RepositoriMovimentsNorma43(RepositoriMoviments):
         self._parser = Norma43Parser(DateFormat.ENGLISH)  # Utilitza AAAAMMDD
         self.moviments = []
 
-    def obtenir_tots(self, directori):
+    def set_directori(self, directori):
+        self.directori = directori
+        self.moviments = self.llegir_moviments(self.directori)
+
+
+    def obtenir_tots(self,):
         """
         Llegeix i retorna tots els moviments del directori passat per paràmetre.
         """
-        self.moviments = self.llegir_moviments(directori)
         return Moviment.clone_list(self.moviments)
 
     def enriquir(self, movs):

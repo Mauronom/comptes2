@@ -32,8 +32,10 @@ class FakeRepositori:
         ]
         self.directori_rebut = None
 
-    def obtenir_tots(self, directori):
+    def set_directori(self, directori):
         self.directori_rebut = directori
+
+    def obtenir_tots(self):
         return Moviment.clone_list(self.moviments)
 
     def enriquir(self, movs):

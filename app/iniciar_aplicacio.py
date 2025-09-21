@@ -59,20 +59,21 @@ class IniciarAplicacio:
         # 1️⃣ Demanar directori a la UI
         directori = self._ui.demanar_directori()
 
+        self._repositori.set_directori(directori)
         # 2️⃣ Carregar moviments del repositori
-        moviments = self._repositori.obtenir_tots(directori)
+        moviments = self._repositori.obtenir_tots()
 
         # 3️⃣ Afegir moviments ficticis
         movs = self.afegir_moviments_ficticis(moviments)
         self._repositori.enriquir(movs)
 
         # 4️⃣ Afegir categories
-        moviments = self._repositori.obtenir_tots(directori)
+        moviments = self._repositori.obtenir_tots()
         movs = self.afegir_categories(moviments, self._repositori_cats)
         self._repositori.save(movs)
 
         # 5️⃣ Preparar moviments finals
-        moviments = self._repositori.obtenir_tots(directori)
+        moviments = self._repositori.obtenir_tots()
         moviments = sorted(moviments, key=lambda m: (m.data, m.banc))
         
         total, diari, mensual = calcular_stats(moviments)
