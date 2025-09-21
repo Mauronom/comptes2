@@ -1,8 +1,8 @@
 import unittest
 from datetime import date
-from domain import Moviment
+from domain import Moviment, ReglaMovimentFictici
 from app import IniciarAplicacio
-from infra import MemoryCategoriesRepo
+from infra import MemoryCategoriesRepo, MemoryConfigMovimentsFicticisRepo
 
 
 class FakeUI:
@@ -50,12 +50,22 @@ class TestIniciarAplicacio(unittest.TestCase):
             "alimentació": ["Compra supermercat"],
             "estalvi": ["PLAN AHORRO 5 SIALP", "CI PIAS","SIALP PIES"],
         })
+        
+        # Configurar repositori de moviments ficticis
+        regla_sialp = ReglaMovimentFictici(
+            patrons=["PLAN AHORRO 5 SIALP", "CI PIAS"],
+            concepte_desti="SIALP PIES",
+            banc_desti="SIALP_PIAS",
+            invertir_import=True
+        )
+        repo_config = MemoryConfigMovimentsFicticisRepo([regla_sialp])
+        
         ui = FakeUI()
-        cas_ús = IniciarAplicacio(repo, ui, repo_cats)
+        cas_ús = IniciarAplicacio(repo, ui, repo_cats, repo_config)
 
         cas_ús.execute()
 
-        # ✅ comprovar que primer s’ha demanat el directori
+        # ✅ comprovar que primer s'ha demanat el directori
         self.assertTrue(ui.directori_demanat)
 
         # ✅ comprovar que el repositori ha rebut el directori correcte
@@ -84,6 +94,31 @@ class TestIniciarAplicacio(unittest.TestCase):
         self.assertEqual(ui.total, 1950.0)
         self.assertEqual(ui.diari, 1950.0/5)
         self.assertEqual(ui.mensual, 30*1950.0/5)
+
+    def test_sense_repositori_config_no_afegeix_moviments_ficticis(self):
+        """Test que verifica que sense repositori de config no s'afegeixen moviments ficticis"""
+        repo = FakeRepositori()
+        repo_cats = MemoryCategoriesRepo({})
+        ui = FakeUI()
+        cas_ús = IniciarAplicacio(repo, ui, repo_cats)  # Sense repositori config
+
+        cas_ús.execute()
+
+        # Només hauria de tenir els 4 moviments originals
+        self.assertEqual(len(ui.moviments_mostrats), 4)
+
+    def test_amb_repositori_config_buit_no_afegeix_moviments_ficticis(self):
+        """Test que verifica que amb repositori de config buit no s'afegeixen moviments ficticis"""
+        repo = FakeRepositori()
+        repo_cats = MemoryCategoriesRepo({})
+        repo_config = MemoryConfigMovimentsFicticisRepo([])  # Repositori buit
+        ui = FakeUI()
+        cas_ús = IniciarAplicacio(repo, ui, repo_cats, repo_config)
+
+        cas_ús.execute()
+
+        # Només hauria de tenir els 4 moviments originals
+        self.assertEqual(len(ui.moviments_mostrats), 4)
 
 
 if __name__ == "__main__":

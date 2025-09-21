@@ -1,26 +1,45 @@
-from domain import Moviment, calcular_stats
+# app.py (modificada)
+from domain import Moviment, calcular_stats, ConfigMovimentsFicticisRepo
 import datetime
 
 class IniciarAplicacio:
-    def __init__(self, repositori_moviments, ui, repositori_cats, extra_moves=[]):
+    def __init__(self, repositori_moviments, ui, repositori_cats, 
+                 repositori_config_ficticis: ConfigMovimentsFicticisRepo = None, 
+                 extra_moves=[]):
         self._repositori = repositori_moviments
         self._repositori_cats = repositori_cats
         self._ui = ui
+        self._repositori_config_ficticis = repositori_config_ficticis
         self.extra_moves = extra_moves
         
 
     def afegir_moviments_ficticis(self, moviments):
         movs = Moviment.clone_list(self.extra_moves)
+        
+        if self._repositori_config_ficticis is None:
+            return movs
+            
+        regles = self._repositori_config_ficticis.get_regles()
+        
         for m in moviments:
-            if "R/ Caja de Ingenieros Vida " in m.concepte or "PLAN AHORRO 5 SIALP" in m.concepte or "CI PIAS" in m.concepte:
-                movs.append(Moviment(
-                    data=m.data,
-                    concepte="SIALP PIES",
-                    import_=-m.import_,
-                    balance=-m.import_ if not movs else movs[-1].balance - m.import_,
-                    banc="SIALP_PIAS"
-                ))
+            for regla in regles:
+                if self._coincideix_patrons(m.concepte, regla.patrons):
+                    import_final = -m.import_ if regla.invertir_import else m.import_
+                    balance_final = import_final if not movs else movs[-1].balance + import_final
+                    
+                    movs.append(Moviment(
+                        data=m.data,
+                        concepte=regla.concepte_desti,
+                        import_=import_final,
+                        balance=balance_final,
+                        banc=regla.banc_desti
+                    ))
+                    break  # Només aplica la primera regla que coincideixi
+        
         return movs
+    
+    def _coincideix_patrons(self, concepte, patrons):
+        return any(patro in concepte for patro in patrons)
 
     def afegir_categories(self, moviments, repo_cats):
         cats = repo_cats.get_all()
