@@ -49,12 +49,20 @@ class UIFreeSimpleGUI:
             [sg.Text("Total: "), sg.Text("0.00", key="-Total-"),
              sg.Text("Diari: "), sg.Text("0.00", key="-Diari-"),
              sg.Text("Mensual: "), sg.Text("0.00", key="-Mensual-")],
-            #[sg.Multiline(size=(80, 10), key="-LOG-", autoscroll=True, disabled=True)]
         ]
         self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 700))
         categories = list(repositori_categories.get_all().keys())+["altres","Totes"]
         self.window["-COMBO_CATEGORIA-"].update(values=categories, value="Totes")
-    
+
+    def demanar_directori(self):
+        """Demana a l’usuari el directori on hi ha els fitxers Norma43."""
+        import FreeSimpleGUI as sg
+        directori = sg.popup_get_folder("Selecciona el directori amb els fitxers Norma43",
+                                        default_path="infra/dades/",
+                                        no_window=False)
+        # Si l’usuari cancel·la, retornem el path per defecte
+        return directori or "infra/dades/"
+
     def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments, cas_us_grafica_categories):
         self._cas_us_grafica_balance = cas_us_grafica_balance
         self._cas_us_grafica_imports = cas_us_grafica_imports
@@ -85,8 +93,6 @@ class UIFreeSimpleGUI:
         w_mensual = self.window["-Mensual-"]
         w_mensual.update(str(mensual))
 
-
-
     def _aplicar_filtres(self):
         """Aplica els filtres quan canvien les dates o el text."""
         if self._cas_us_filtrar_moviments:
@@ -95,13 +101,12 @@ class UIFreeSimpleGUI:
             filtre_text = self.window["-INPUT_FILTRE-"].get()
             categoria_seleccionada = self.window["-COMBO_CATEGORIA-"].get()
 
-            # Cridem al cas d'ús amb tots els filtres
             self._cas_us_filtrar_moviments.execute(filtre_text, data_inici, data_fi, categoria_seleccionada)
 
     def _validar_format_data(self, data_str):
         """Valida que la data tingui el format correcte YYYY-MM-DD."""
         if not data_str:
-            return True  # Data buida és vàlida
+            return True
         try:
             datetime.strptime(data_str, "%Y-%m-%d")
             return True
@@ -124,18 +129,12 @@ class UIFreeSimpleGUI:
             elif event == "-BTN_CATEGORIES-" and self._cas_us_grafica_categories:
                 self._cas_us_grafica_categories.execute(self._moviments)
             elif event in ["-INPUT_FILTRE-", "-DATA_INICI-", "-DATA_FI-"]:
-                # Validem les dates abans d'aplicar els filtres
                 data_inici = values.get("-DATA_INICI-", "").strip()
                 data_fi = values.get("-DATA_FI-", "").strip()
                 
-                # Només apliquem els filtres si les dates són vàlides
                 if self._validar_format_data(data_inici) and self._validar_format_data(data_fi):
                     self._aplicar_filtres()
-                else:
-                    # Opcional: mostrar missatge d'error
-                    pass
             elif event == "-COMBO_CATEGORIA-":
-                categoria_seleccionada = values["-COMBO_CATEGORIA-"]
-                self._aplicar_filtres()  # Crida al teu mètode de filtres
+                self._aplicar_filtres()
 
         self.window.close()

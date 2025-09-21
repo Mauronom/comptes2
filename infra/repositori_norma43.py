@@ -7,27 +7,30 @@ class RepositoriMovimentsNorma43(RepositoriMoviments):
     Repositori que llegeix moviments de fitxers Norma 43 utilitzant norma43parser.
     """
 
-    def __init__(self, directori="infra/dades"):
+    def __init__(self):
         from norma43parser import Norma43Parser, DateFormat
-        self._directori = directori
         self._parser = Norma43Parser(DateFormat.ENGLISH)  # Utilitza AAAAMMDD
-        self.moviments = self.llegir_moviments()
+        self.moviments = []
 
-    def obtenir_tots(self):
+    def obtenir_tots(self, directori):
+        """
+        Llegeix i retorna tots els moviments del directori passat per paràmetre.
+        """
+        self.moviments = self.llegir_moviments(directori)
         return Moviment.clone_list(self.moviments)
 
-    def enriquir(self,movs):
+    def enriquir(self, movs):
         self.moviments.extend(movs)
-        
-    def save(self,movs):
+
+    def save(self, movs):
         self.moviments = Moviment.clone_list(movs)
-        
-    def llegir_moviments(self):
+
+    def llegir_moviments(self, directori):
         moviments = []
-        for fitxer in os.listdir(self._directori):
-            if fitxer.lower().endswith((".n43", ".txt")):
+        for fitxer in os.listdir(directori):
+            if fitxer.lower().endswith((".n43")):
                 banc = os.path.splitext(fitxer)[0]
-                path = os.path.join(self._directori, fitxer)
+                path = os.path.join(directori, fitxer)
                 with open(path, "r", encoding="latin-1", errors="ignore") as f:
                     contents = f.read()
                 doc = self._parser.parse(contents)
@@ -36,7 +39,7 @@ class RepositoriMovimentsNorma43(RepositoriMoviments):
                         moviments.append(
                             Moviment(
                                 line.transaction_date,
-                                line.extra_information[0].replace('      ',' ').strip(),
+                                line.extra_information[0].replace('      ', ' ').strip(),
                                 float(line.amount),
                                 line.balance,
                                 banc

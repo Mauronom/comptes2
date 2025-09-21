@@ -9,6 +9,8 @@ class FakeUI:
     def __init__(self):
         self.moviments_mostrats = []
         self.total = 0
+        self.directori_demanat = False
+        self.directori_retornat = "/fake/path"
 
     def mostrar_moviments(self, moviments, total, diari, mensual):
         self.moviments_mostrats = moviments
@@ -16,26 +18,32 @@ class FakeUI:
         self.diari = diari
         self.mensual = mensual
 
+    def demanar_directori(self):
+        self.directori_demanat = True
+        return self.directori_retornat
+
 class FakeRepositori:
-    def __init__(self,):
+    def __init__(self):
         self.moviments = [
             Moviment(date(2025, 1, 1), "Sou",2000.0, 5000.0, "Banc A"),
             Moviment(date(2025, 1, 2), "Compra supermercat", -50.0, 4950.0, "Banc A"),
             Moviment(date(2025, 1, 3), "PLAN AHORRO 5 SIALP", -100.0, 4850.0, "Banc B"),
             Moviment(date(2025, 1, 5), "CI PIAS", -100.0, 4750.0, "Banc B"),
         ]
+        self.directori_rebut = None
 
-    def obtenir_tots(self):
+    def obtenir_tots(self, directori):
+        self.directori_rebut = directori
         return Moviment.clone_list(self.moviments)
 
-    def enriquir(self,movs):
+    def enriquir(self, movs):
         self.moviments.extend(movs)
 
-    def save(self,movs):
+    def save(self, movs):
         self.moviments = Moviment.clone_list(movs)
 
 class TestIniciarAplicacio(unittest.TestCase):
-    def test_execute_mostra_moviments(self):
+    def test_execute_demana_directori_i_passa_al_repositori(self):
         repo = FakeRepositori()
         repo_cats = MemoryCategoriesRepo({
             "ingrés": ["sou"],
@@ -46,6 +54,14 @@ class TestIniciarAplicacio(unittest.TestCase):
         cas_ús = IniciarAplicacio(repo, ui, repo_cats)
 
         cas_ús.execute()
+
+        # ✅ comprovar que primer s’ha demanat el directori
+        self.assertTrue(ui.directori_demanat)
+
+        # ✅ comprovar que el repositori ha rebut el directori correcte
+        self.assertEqual(repo.directori_rebut, ui.directori_retornat)
+
+        # ✅ comprovar que es mostren els moviments
         self.assertIsNotNone(ui.moviments_mostrats)
         self.assertEqual(len(repo.moviments), 6)
         self.assertEqual(len(ui.moviments_mostrats), 6)
@@ -68,7 +84,6 @@ class TestIniciarAplicacio(unittest.TestCase):
         self.assertEqual(ui.total, 1950.0)
         self.assertEqual(ui.diari, 1950.0/5)
         self.assertEqual(ui.mensual, 30*1950.0/5)
-
 
 
 if __name__ == "__main__":

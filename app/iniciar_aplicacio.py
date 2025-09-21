@@ -35,21 +35,32 @@ class IniciarAplicacio:
         
     def execute(self):
         """
-        Obté els moviments del repositori i actualitza la UI.
+        Demana el directori a la UI, obté els moviments del repositori i actualitza la UI.
         """
-        moviments = self._repositori.obtenir_tots()
+        # 1️⃣ Demanar directori a la UI
+        directori = self._ui.demanar_directori()
+
+        # 2️⃣ Carregar moviments del repositori
+        moviments = self._repositori.obtenir_tots(directori)
+
+        # 3️⃣ Afegir moviments ficticis
         movs = self.afegir_moviments_ficticis(moviments)
         self._repositori.enriquir(movs)
-        moviments = self._repositori.obtenir_tots()
+
+        # 4️⃣ Afegir categories
+        moviments = self._repositori.obtenir_tots(directori)
         movs = self.afegir_categories(moviments, self._repositori_cats)
         self._repositori.save(movs)
-        moviments = self._repositori.obtenir_tots()
-        moviments = sorted(moviments, key=lambda m: (m.data,m.banc))
+
+        # 5️⃣ Preparar moviments finals
+        moviments = self._repositori.obtenir_tots(directori)
+        moviments = sorted(moviments, key=lambda m: (m.data, m.banc))
         
         total, diari, mensual = calcular_stats(moviments)
         
-        # La UI hauria de tenir un mètode mostrar_moviments
-        self._ui.mostrar_moviments(moviments, total, round(diari,2), round(mensual,2))
-        # Si és una UI Textual, llavors cridem run() per iniciar l'app
+        # 6️⃣ Mostrar resultats a la UI
+        self._ui.mostrar_moviments(moviments, total, round(diari, 2), round(mensual, 2))
+
+        # 7️⃣ Si és una UI interactiva, arrencar-la
         if hasattr(self._ui, "run"):
             self._ui.run()

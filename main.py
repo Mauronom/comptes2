@@ -11,7 +11,7 @@ from domain import Moviment
 import datetime
 
 if __name__ == "__main__":
-    repositori = RepositoriMovimentsNorma43(directori="infra/dades")
+    repositori = RepositoriMovimentsNorma43()
     repositori_cats = RepositoriCategoria(directori="infra/dades")
     # ui_grafica = UIMatplotlib()
     ui_grafica = UIBokeh()
