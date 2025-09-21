@@ -2,3 +2,4 @@
 .DS_Store
 *.swp
 *.n43
+infra/dades/*
