@@ -9,8 +9,11 @@ class ReglaMovimentFictici:
     banc_desti: str
     invertir_import: bool = True
 
-
 class ConfigMovimentsFicticisRepo(ABC):
     @abstractmethod
     def get_regles(self) -> List[ReglaMovimentFictici]:
+        pass
+    
+    @abstractmethod
+    def get_moviments_inicials(self) -> List:
         pass
