@@ -13,3 +13,12 @@ class RepositoriCategoria(MemoryCategoriesRepo):
         self.categories[name] = texts
         with open(f'{self.directori}/categories.json', 'w') as fitxer:
             json.dump(self.categories, fitxer, indent=2, ensure_ascii=False)
+
+    def delete(self, name):
+        import json
+        if name in self.categories:
+            del self.categories[name]
+            with open(f'{self.directori}/categories.json', 'w') as fitxer:
+                json.dump(self.categories, fitxer, indent=2, ensure_ascii=False)
+            return True
+        return False

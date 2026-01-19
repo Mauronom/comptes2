@@ -3,3 +3,7 @@ from .iniciar_aplicacio import IniciarAplicacio
 from .mostrar_grafica_balance import MostrarGraficaBalance
 from .mostrar_grafica_imports import MostrarGraficaImports
 from .mostrar_grafica_categories import MostrarGraficaCategories
+from .mostrar_categories import MostrarCategories
+from .afegir_categoria import AfegirCategoria
+from .editar_categoria import EditarCategoria
+from .eliminar_categoria import EliminarCategoria

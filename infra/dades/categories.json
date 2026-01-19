@@ -305,11 +305,15 @@
     "zeeman",
     "el mejor precio"
   ],
-  "targeta":[
+  "targeta": [
     "credito tarjeta"
   ],
   "funeraria": [
     "serv.fun"
   ],
-  "estalvi":["SIALP","Vida S.A","PIAS"]
+  "estalvi": [
+    "SIALP",
+    "Vida S.A",
+    "PIAS"
+  ]
 }
