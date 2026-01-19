@@ -55,6 +55,22 @@ class UIFreeSimpleGUI:
         categories = list(repositori_categories.get_all().keys())+["altres","Totes"]
         self.window["-COMBO_CATEGORIA-"].update(values=categories, value="Totes")
 
+    def mostrar_popup(self, titol, text):
+        """Mostra un popup amb un títol i un text."""
+        import FreeSimpleGUI as sg
+        sg.popup(titol, text)
+
+    def input_popup(self, text, title):
+        """Mostra un popup per demanar entrada d'usuari."""
+        import FreeSimpleGUI as sg
+        return sg.popup_get_text(text, title=title)
+
+    def confirmar_accio(self, missatge):
+        """Mostra un diàleg de confirmació per a l'usuari."""
+        import FreeSimpleGUI as sg
+        resposta = sg.popup_yes_no(missatge)
+        return resposta == "Yes"
+
     def demanar_directori(self):
         """Demana a l’usuari el directori on hi ha els fitxers Norma43."""
         import FreeSimpleGUI as sg
@@ -140,22 +156,11 @@ class UIFreeSimpleGUI:
             if event == sg.WIN_CLOSED or event == "-BTN_TANCAR-":
                 break
             elif event == "-BTN_AFEGIR-":
-                # Diàleg per afegir nova categoria
-                nova_categoria = sg.popup_get_text("Nom de la nova categoria:", title="Nova Categoria")
-                if nova_categoria:
-                    paraules_clau = sg.popup_get_text("Paraules clau separades per comes:", title="Paraules Clau")
-                    if paraules_clau:
-                        # Convertir la cadena de paraules clau en una llista
-                        paraules_clau_list = [p.strip() for p in paraules_clau.split(",") if p.strip()]
-                        # Executar el cas d'ús per afegir la categoria
-                        if hasattr(self, '_cas_us_afegir_categoria') and self._cas_us_afegir_categoria:
-                            self._cas_us_afegir_categoria.execute(nova_categoria, paraules_clau_list)
-                            # Actualitzar la visualització
-                            sg.popup(f"S'ha afegit la categoria '{nova_categoria}' amb paraules clau: {paraules_clau}")
-                            # Actualitzar la taula amb la nova categoria
-                            table_data.append([nova_categoria, paraules_clau])
-                            original_keywords[nova_categoria] = paraules_clau_list
-                            window["-TABLE_CATEGORIES-"].update(values=table_data)
+                # Executar el cas d'ús per afegir la categoria
+                # El cas d'ús demanarà les dades a través de la UI i mostrarà el missatge de confirmació
+                if hasattr(self, '_cas_us_afegir_categoria') and self._cas_us_afegir_categoria:
+                    self._cas_us_afegir_categoria.execute()
+                    # TODO: Actualitzar la taula amb la nova categoria (requereix refrescar dades del repositori)
             elif event == "-BTN_EDITAR-":
                 # Obtenir la fila seleccionada
                 selected_rows = values["-TABLE_CATEGORIES-"]
@@ -168,43 +173,26 @@ class UIFreeSimpleGUI:
                         paraules_originals = original_keywords.get(categoria_actual, [])
                         paraules_actuals = ", ".join(paraules_originals)  # Convertim a cadena per mostrar a la UI
 
-                        # Diàleg per editar la categoria
-                        nova_categoria = sg.popup_get_text("Editar categoria:", default_text=categoria_actual, title="Editar Categoria")
-                        if nova_categoria:
-                            noves_paraules = sg.popup_get_text("Editar paraules clau:", default_text=paraules_actuals, title="Editar Paraules Clau")
-                            if noves_paraules:
-                                # Convertir la cadena de paraules clau en una llista
-                                noves_paraules_list = [p.strip() for p in noves_paraules.split(",") if p.strip()]
-                                # Executar el cas d'ús per editar la categoria
-                                if hasattr(self, '_cas_us_editar_categoria') and self._cas_us_editar_categoria:
-                                    self._cas_us_editar_categoria.execute(nova_categoria, noves_paraules_list)
-                                    # Actualitzar la visualització
-                                    sg.popup(f"S'ha editat la categoria '{nova_categoria}' amb paraules clau: {noves_paraules}")
-                                    # Actualitzar la taula amb les dades editades
-                                    table_data[row_index] = [nova_categoria, noves_paraules]
-                                    original_keywords[nova_categoria] = noves_paraules_list
-                                    window["-TABLE_CATEGORIES-"].update(values=table_data)
+                        # Executar el cas d'ús per editar la categoria
+                        # El cas d'ús demanarà les dades a través de la UI
+                        if hasattr(self, '_cas_us_editar_categoria') and self._cas_us_editar_categoria:
+                            # Passem els valors actuals com a valor per defecte
+                            # Per ara, cridem sense paràmetres perquè el cas d'ús demani les dades a la UI
+                            self._cas_us_editar_categoria.execute()
+                            # TODO: Actualitzar la taula amb les dades editades (requereix refrescar dades del repositori)
             elif event == "-BTN_ELIMINAR-":
                 # Obtenir la fila seleccionada
                 selected_rows = values["-TABLE_CATEGORIES-"]
                 if selected_rows:
                     row_index = selected_rows[0]  # Agafem la primera fila seleccionada
                     if 0 <= row_index < len(table_data):
-                        categoria_a_eliminar = table_data[row_index][0]
-                        confirmacio = sg.popup_yes_no(f"Segur que vol eliminar la categoria '{categoria_a_eliminar}'?")
-                        if confirmacio == "Yes":
-                            # Executar el cas d'ús per eliminar la categoria
-                            if hasattr(self, '_cas_us_eliminar_categoria') and self._cas_us_eliminar_categoria:
-                                result = self._cas_us_eliminar_categoria.execute(categoria_a_eliminar)
-                                if result:
-                                    # Eliminar la fila de la taula
-                                    table_data.pop(row_index)
-                                    if categoria_a_eliminar in original_keywords:
-                                        del original_keywords[categoria_a_eliminar]
-                                    window["-TABLE_CATEGORIES-"].update(values=table_data)
-                                    sg.popup(f"S'ha eliminat la categoria '{categoria_a_eliminar}' correctament.")
-                                else:
-                                    sg.popup_error(f"No s'ha pogut eliminar la categoria '{categoria_a_eliminar}'.")
+                        # Executar el cas d'ús per eliminar la categoria
+                        # El cas d'ús demanarà confirmació a través de la UI
+                        if hasattr(self, '_cas_us_eliminar_categoria') and self._cas_us_eliminar_categoria:
+                            result = self._cas_us_eliminar_categoria.execute()
+                            if result:
+                                # TODO: Actualitzar la taula amb la categoria eliminada (requereix refrescar dades del repositori)
+                                pass
 
         window.close()
 
