@@ -38,6 +38,7 @@ class DirectUIForDelete:
         self.confirmacio = confirmacio
         self.categories_disponibles = categories_disponibles or []
         self.popup_messages = []  # Track popup messages for testing
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title, default_text=None):
         """Not used in the new implementation"""
@@ -53,8 +54,7 @@ class DirectUIForDelete:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
     def confirmar_accio(self, missatge):
         """Return predefined confirmation value for testing"""
@@ -78,6 +78,7 @@ def test_eliminar_categoria_removes_existing_category():
     # Verify other categories remain unchanged
     assert "alimentació" in fake_repo.categories
     assert "habitatge" in fake_repo.categories
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_eliminar_categoria_nonexistent_category():
@@ -93,6 +94,8 @@ def test_eliminar_categoria_nonexistent_category():
     # --- Assert ---
     assert result is False  # Indicating failure/couldn't find category
     assert len(fake_repo.categories) == 3  # No categories should be removed
+    # actualitzar_categories should NOT be called since deletion failed
+    assert not ui.actualitzar_categories_called  # Verify that the method was NOT called
 
 
 def test_eliminar_categoria_last_category():
@@ -108,6 +111,7 @@ def test_eliminar_categoria_last_category():
     # --- Assert ---
     assert result is True  # Indicating success
     assert len(fake_repo.categories) == 0  # No categories should remain
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_eliminar_categoria_case_sensitivity():
@@ -123,6 +127,8 @@ def test_eliminar_categoria_case_sensitivity():
     # --- Assert ---
     assert result is False  # Should not find the category due to case sensitivity
     assert len(fake_repo.categories) == 1  # Category should still exist
+    # actualitzar_categories should NOT be called since deletion failed
+    assert not ui.actualitzar_categories_called  # Verify that the method was NOT called
 
 
 class DirectUI:
@@ -134,6 +140,7 @@ class DirectUI:
         self.categories_disponibles = categories_disponibles or []
         self.call_count = 0
         self.popup_messages = []  # Track popup messages for testing
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title, default_text=None):
         """Return predefined values based on the call sequence"""
@@ -150,8 +157,7 @@ class DirectUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
     def confirmar_accio(self, missatge):
         """Return predefined confirmation value for testing"""
@@ -175,6 +181,7 @@ def test_eliminar_categoria_removes_existing_category_through_ui():
     # Verify other categories remain unchanged
     assert "alimentació" in fake_repo.categories
     assert "habitatge" in fake_repo.categories
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_eliminar_categoria_handles_cancelled_confirmation():
@@ -191,6 +198,8 @@ def test_eliminar_categoria_handles_cancelled_confirmation():
     assert result is False  # Indicating cancellation
     assert "transport" in fake_repo.categories  # Category should still exist
     assert len(fake_repo.categories) == 3  # No categories should be removed
+    # actualitzar_categories should NOT be called since deletion was cancelled
+    assert not ui.actualitzar_categories_called  # Verify that the method was NOT called
 
 
 class MockUI:
@@ -204,6 +213,7 @@ class MockUI:
         self.seleccio_categoria_calls = []  # To track calls to seleccionar_categoria
         self.popup_messages = []  # Track popup messages for testing
         self.confirmation_calls = []  # Track confirmation calls
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title, default_text=None):
         """Simulate UI popup that gets user input"""
@@ -221,8 +231,7 @@ class MockUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
     def confirmar_accio(self, missatge):
         """Track confirmation calls for testing purposes"""
@@ -251,3 +260,4 @@ def test_eliminar_categoria_interacts_with_ui():
     assert len(mock_ui.confirmation_calls) == 1  # One call to confirm deletion
     assert len(mock_ui.popup_messages) == 1  # One success message
     assert mock_ui.popup_messages[0][0] == "Èxit"  # Title should be "Èxit"
+    assert mock_ui.actualitzar_categories_called  # Verify that the method was called

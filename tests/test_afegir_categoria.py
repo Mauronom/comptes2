@@ -4,7 +4,7 @@ from app import AfegirCategoria  # This will be created later
 
 class FakeCategoriesRepo:
     """Fake repository for testing"""
-    
+
     def __init__(self, categories=None):
         if categories is None:
             categories = {}
@@ -28,6 +28,7 @@ class DirectUI:
         self.paraules_clau = paraules_clau
         self.call_count = 0
         self.popup_messages = []  # Track popup messages for testing
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title):
         """Return predefined values based on the call sequence"""
@@ -52,8 +53,7 @@ class DirectUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
 
 def test_afegir_categoria_creates_new_category():
@@ -69,6 +69,7 @@ def test_afegir_categoria_creates_new_category():
     # --- Assert ---
     assert "alimentació" in fake_repo.categories
     assert fake_repo.categories["alimentació"] == ["supermercat", "fruits", "verdures"]
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_afegir_categoria_overwrites_existing_category():
@@ -125,6 +126,7 @@ class MockUI:
         self.paraules_clau_retorn = paraules_clau_retorn
         self.input_calls = []  # To track calls to input_popup
         self.popup_messages = []  # Track popup messages for testing
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title):
         """Simulate UI popup that gets user input"""
@@ -142,8 +144,7 @@ class MockUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
 
 def test_afegir_categoria_interacts_with_ui():
@@ -162,6 +163,7 @@ def test_afegir_categoria_interacts_with_ui():
     assert len(mock_ui.input_calls) == 2  # Two calls to UI: one for category name, one for keywords
     assert mock_ui.input_calls[0] == ("Nom de la nova categoria:", "Nova Categoria")
     assert mock_ui.input_calls[1] == ("Paraules clau separades per comes:", "Paraules Clau")
+    assert mock_ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_afegir_categoria_handles_none_category_input():
@@ -177,6 +179,8 @@ def test_afegir_categoria_handles_none_category_input():
     # --- Assert ---
     assert len(fake_repo.categories) == 0  # No category should be added
     assert len(mock_ui.input_calls) == 1  # Only first call should happen
+    # Note: actualitzar_categories is NOT called when no category name is provided
+    assert not mock_ui.actualitzar_categories_called  # Verify that the method was NOT called when no category is provided
 
 
 def test_afegir_categoria_handles_none_keywords_input():
@@ -193,6 +197,7 @@ def test_afegir_categoria_handles_none_keywords_input():
     assert "categoria_prova" in fake_repo.categories
     assert fake_repo.categories["categoria_prova"] == []
     assert len(mock_ui.input_calls) == 2  # Both calls should happen
+    assert mock_ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_afegir_categoria_processes_keywords_correctly():
@@ -209,3 +214,4 @@ def test_afegir_categoria_processes_keywords_correctly():
     assert "transport" in fake_repo.categories
     assert fake_repo.categories["transport"] == ["gasolina", "autobús", "taxi"]
     assert len(mock_ui.input_calls) == 2
+    assert mock_ui.actualitzar_categories_called  # Verify that the method was called

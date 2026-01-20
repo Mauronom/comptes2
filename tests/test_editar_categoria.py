@@ -4,7 +4,7 @@ from app import EditarCategoria  # This will be created later
 
 class FakeCategoriesRepo:
     """Fake repository for testing"""
-    
+
     def __init__(self, categories=None):
         if categories is None:
             categories = {
@@ -32,6 +32,7 @@ class DirectUI:
         self.paraules_clau = paraules_clau
         self.call_count = 0
         self.popup_messages = []  # Track popup messages for testing
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title, default_text=None):
         """Return predefined values based on the call sequence"""
@@ -56,8 +57,7 @@ class DirectUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
 
 def test_editar_categoria_updates_existing_category():
@@ -76,6 +76,7 @@ def test_editar_categoria_updates_existing_category():
     # Verify other categories remain unchanged
     assert "transport" in fake_repo.categories
     assert fake_repo.categories["transport"] == ["gasolina", "autobús", "tren"]
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_editar_categoria_creates_new_category():
@@ -93,6 +94,7 @@ def test_editar_categoria_creates_new_category():
     assert fake_repo.categories["ocidi"] == ["cinema", "teatre", "restaurants"]
     # Verify other categories remain unchanged
     assert "alimentació" in fake_repo.categories
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_editar_categoria_with_empty_keywords():
@@ -108,6 +110,7 @@ def test_editar_categoria_with_empty_keywords():
     # --- Assert ---
     assert "habitatge" in fake_repo.categories
     assert fake_repo.categories["habitatge"] == []
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_editar_categoria_with_special_characters():
@@ -123,6 +126,7 @@ def test_editar_categoria_with_special_characters():
     # --- Assert ---
     assert "ocasió especial" in fake_repo.categories
     assert fake_repo.categories["ocasió especial"] == ["café", "naïf", "fiançailles"]
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 class DirectUI:
@@ -134,6 +138,7 @@ class DirectUI:
         self.categories_disponibles = categories_disponibles or []
         self.call_count = 0
         self.popup_messages = []  # Track popup messages for testing purposes
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title, default_text=None):
         """Return predefined values for keyword input"""
@@ -158,8 +163,7 @@ class DirectUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
 
 def test_editar_categoria_creates_new_category():
@@ -175,6 +179,7 @@ def test_editar_categoria_creates_new_category():
     # --- Assert ---
     assert "nova_categoria" in fake_repo.categories
     assert fake_repo.categories["nova_categoria"] == ["paraula1", "paraula2"]
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 def test_editar_categoria_updates_existing_category_through_ui():
@@ -190,6 +195,7 @@ def test_editar_categoria_updates_existing_category_through_ui():
     # --- Assert ---
     assert "alimentació" in fake_repo.categories
     assert fake_repo.categories["alimentació"] == ["carn", "peix", "ous"]
+    assert ui.actualitzar_categories_called  # Verify that the method was called
 
 
 class MockUI:
@@ -202,6 +208,7 @@ class MockUI:
         self.input_calls = []  # To track calls to input_popup
         self.seleccio_categoria_calls = []  # To track calls to seleccionar_categoria
         self.popup_messages = []  # Track popup messages for testing
+        self.actualitzar_categories_called = False  # Track if method was called
 
     def input_popup(self, text, title, default_text=None):
         """Simulate UI popup that gets user input for keywords"""
@@ -220,8 +227,7 @@ class MockUI:
 
     def actualitzar_categories(self):
         """Simulate updating categories for testing purposes"""
-        # Aquest mètode no fa res en els tests, només evita l'error
-        pass
+        self.actualitzar_categories_called = True  # Mark that method was called
 
 
 def test_editar_categoria_interacts_with_ui():
@@ -246,3 +252,4 @@ def test_editar_categoria_interacts_with_ui():
     assert mock_ui.input_calls[0][:2] == ("Editar paraules clau:", "Editar Paraules Clau")
     assert len(mock_ui.popup_messages) == 1  # One success message
     assert mock_ui.popup_messages[0][0] == "Èxit"  # Title should be "Èxit"
+    assert mock_ui.actualitzar_categories_called  # Verify that the method was called
