@@ -41,4 +41,8 @@ class EliminarCategoria:
         else:
             self._ui.mostrar_popup("Error", f"No s'ha pogut eliminar la categoria '{nom_categoria}'.")
 
+        # Actualitzar la vista de categories si l'eliminació va ser exitosa
+        if resultat:
+            self._ui.actualitzar_categories()
+
         return resultat

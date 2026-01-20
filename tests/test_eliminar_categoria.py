@@ -46,6 +46,11 @@ class DirectUIForDelete:
         """Track popup messages for testing purposes"""
         self.popup_messages.append((titol, text))
 
+    def actualitzar_categories(self):
+        """Simulate updating categories for testing purposes"""
+        # Aquest mètode no fa res en els tests, només evita l'error
+        pass
+
     def confirmar_accio(self, missatge):
         """Return predefined confirmation value for testing"""
         return self.confirmacio
@@ -133,6 +138,11 @@ class DirectUI:
         """Track popup messages for testing purposes"""
         self.popup_messages.append((titol, text))
 
+    def actualitzar_categories(self):
+        """Simulate updating categories for testing purposes"""
+        # Aquest mètode no fa res en els tests, només evita l'error
+        pass
+
     def confirmar_accio(self, missatge):
         """Return predefined confirmation value for testing"""
         return self.confirmacio
@@ -191,6 +201,11 @@ class MockUI:
     def mostrar_popup(self, titol, text):
         """Track popup messages for testing purposes"""
         self.popup_messages.append((titol, text))
+
+    def actualitzar_categories(self):
+        """Simulate updating categories for testing purposes"""
+        # Aquest mètode no fa res en els tests, només evita l'error
+        pass
 
     def confirmar_accio(self, missatge):
         """Track confirmation calls for testing purposes"""

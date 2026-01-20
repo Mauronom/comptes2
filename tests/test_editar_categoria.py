@@ -54,6 +54,11 @@ class DirectUI:
         """Track popup messages for testing purposes"""
         self.popup_messages.append((titol, text))
 
+    def actualitzar_categories(self):
+        """Simulate updating categories for testing purposes"""
+        # Aquest mètode no fa res en els tests, només evita l'error
+        pass
+
 
 def test_editar_categoria_updates_existing_category():
     """Test that EditarCategoria updates an existing category in the repository"""
@@ -150,6 +155,11 @@ class DirectUI:
         """Track popup messages for testing purposes"""
         self.popup_messages.append((titol, text))
 
+    def actualitzar_categories(self):
+        """Simulate updating categories for testing purposes"""
+        # Aquest mètode no fa res en els tests, només evita l'error
+        pass
+
 
 def test_editar_categoria_creates_new_category():
     """Test that EditarCategoria creates a new category in the repository when using UI"""
@@ -203,6 +213,11 @@ class MockUI:
     def mostrar_popup(self, titol, text):
         """Track popup messages for testing purposes"""
         self.popup_messages.append((titol, text))
+
+    def actualitzar_categories(self):
+        """Simulate updating categories for testing purposes"""
+        # Aquest mètode no fa res en els tests, només evita l'error
+        pass
 
 
 def test_editar_categoria_interacts_with_ui():

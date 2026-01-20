@@ -35,3 +35,6 @@ class AfegirCategoria:
 
         # Mostrar missatge de confirmació a la UI
         self._ui.mostrar_popup("Èxit", f"S'ha afegit la categoria '{nom_categoria}' amb {len(paraules_clau)} paraules clau.")
+
+        # Actualitzar la vista de categories
+        self._ui.actualitzar_categories()

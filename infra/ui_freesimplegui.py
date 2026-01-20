@@ -7,6 +7,7 @@ class UIFreeSimpleGUI:
     def __init__(self, repositori_moviments, repositori_categories):
         import FreeSimpleGUI as sg
         self._repositori = repositori_moviments
+        self._repositori_categories = repositori_categories
         self._moviments = []
         self._cas_us_grafica_balance = None
         self._cas_us_grafica_imports = None
@@ -54,6 +55,7 @@ class UIFreeSimpleGUI:
         self.window = sg.Window("Moviments Bancaris", layout, finalize=True, resizable=True, size=(1200, 700))
         categories = list(repositori_categories.get_all().keys())+["altres","Totes"]
         self.window["-COMBO_CATEGORIA-"].update(values=categories, value="Totes")
+        self._finestra_categories_actual = None  # Variable per emmagatzemar la referència a la finestra de categories
 
     def mostrar_popup(self, titol, text):
         """Mostra un popup amb un títol i un text."""
@@ -114,24 +116,48 @@ class UIFreeSimpleGUI:
         w_mensual = self.window["-Mensual-"]
         w_mensual.update(str(mensual))
 
+    def _guardar_referencia_finestra_categories(self, window):
+        """Guarda una referència a la finestra de categories."""
+        self._finestra_categories_actual = window
+
+    def _netejar_referencia_finestra_categories(self):
+        """Neteja la referència a la finestra de categories."""
+        self._finestra_categories_actual = None
+
+    def actualitzar_categories(self):
+        """Actualitza la finestra de categories si està oberta."""
+        import FreeSimpleGUI as sg
+        if self._finestra_categories_actual:
+            # Actualitzar la taula amb les dades actualitzades del repositori de categories
+            categories = self._repositori_categories.get_all()
+            table_data = []
+            for category, keywords in categories.items():
+                keywords_str = ", ".join(keywords)
+                table_data.append([category, keywords_str])
+            self._finestra_categories_actual["-TABLE_CATEGORIES-"].update(values=table_data)
+
     def mostrar_categories(self, categories):
         """Mostra una finestra amb la llista de categories i permet gestionar-les."""
         import FreeSimpleGUI as sg
 
-        # Preparar les dades per a la taula
-        # Guardem tant la llista original com la versió en cadena per a la UI
-        table_data = []
-        original_keywords = {}  # Diccionari per mantenir les llistes originals
-        for category, keywords in categories.items():
-            keywords_str = ", ".join(keywords)
-            table_data.append([category, keywords_str])
-            original_keywords[category] = keywords  # Guardem la llista original
+        def actualitzar_finestra(window):
+            """Funció interna per actualitzar la finestra amb les dades actuals del repositori de categories."""
+            # Recuperar les categories actuals del repositori de categories
+            categories = self._repositori_categories.get_all()
+            table_data = []
+            original_keywords = {}
+            for category, keywords in categories.items():
+                keywords_str = ", ".join(keywords)
+                table_data.append([category, keywords_str])
+                original_keywords[category] = keywords
+            window["-TABLE_CATEGORIES-"].update(values=table_data)
+            return table_data, original_keywords
 
         # Crear el layout per a la finestra de categories
         layout = [
             [sg.Text("Gestió de Categories", font=("Arial", 16))],
             [sg.Table(
-                values=table_data,
+                values=[],
                 headings=["Categoria", "Paraules clau associades"],
                 col_widths=[20, 50],
                 auto_size_columns=False,
@@ -139,7 +165,7 @@ class UIFreeSimpleGUI:
                 key="-TABLE_CATEGORIES-",
                 expand_x=True,
                 expand_y=True,
-                num_rows=min(len(table_data), 10)  # Mostrar fins a 10 files
+                num_rows=10  # Mostrar fins a 10 files
             )],
             [sg.Button("Afegir Categoria", key="-BTN_AFEGIR-"),
              sg.Button("Editar Categoria", key="-BTN_EDITAR-"),
@@ -149,6 +175,11 @@ class UIFreeSimpleGUI:
 
         # Crear la finestra modal
         window = sg.Window("Gestió de Categories", layout, modal=True, finalize=True, resizable=True, size=(800, 400))
+        # Guardar la referència a la finestra
+        self._guardar_referencia_finestra_categories(window)
+
+        # Actualitzar la finestra amb les dades inicials
+        table_data, original_keywords = actualitzar_finestra(window)
 
         while True:
             event, values = window.read()
@@ -160,7 +191,6 @@ class UIFreeSimpleGUI:
                 # El cas d'ús demanarà les dades a través de la UI i mostrarà el missatge de confirmació
                 if hasattr(self, '_cas_us_afegir_categoria') and self._cas_us_afegir_categoria:
                     self._cas_us_afegir_categoria.execute()
-                    # TODO: Actualitzar la taula amb la nova categoria (requereix refrescar dades del repositori)
             elif event == "-BTN_EDITAR-":
                 # Obtenir la fila seleccionada
                 selected_rows = values["-TABLE_CATEGORIES-"]
@@ -179,7 +209,6 @@ class UIFreeSimpleGUI:
                             # Passem els valors actuals com a valor per defecte
                             # Per ara, cridem sense paràmetres perquè el cas d'ús demani les dades a la UI
                             self._cas_us_editar_categoria.execute()
-                            # TODO: Actualitzar la taula amb les dades editades (requereix refrescar dades del repositori)
             elif event == "-BTN_ELIMINAR-":
                 # Obtenir la fila seleccionada
                 selected_rows = values["-TABLE_CATEGORIES-"]
@@ -189,11 +218,10 @@ class UIFreeSimpleGUI:
                         # Executar el cas d'ús per eliminar la categoria
                         # El cas d'ús demanarà confirmació a través de la UI
                         if hasattr(self, '_cas_us_eliminar_categoria') and self._cas_us_eliminar_categoria:
-                            result = self._cas_us_eliminar_categoria.execute()
-                            if result:
-                                # TODO: Actualitzar la taula amb la categoria eliminada (requereix refrescar dades del repositori)
-                                pass
+                            self._cas_us_eliminar_categoria.execute()
 
+        # Netegem la referència a la finestra en tancar
+        self._netejar_referencia_finestra_categories()
         window.close()
 
     def _aplicar_filtres(self):
