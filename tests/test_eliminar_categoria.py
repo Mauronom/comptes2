@@ -33,12 +33,17 @@ class FakeCategoriesRepo:
 class DirectUIForDelete:
     """UI implementation that returns predefined values for testing delete operations"""
 
-    def __init__(self, nom_categoria, confirmacio=True):
+    def __init__(self, nom_categoria, confirmacio=True, categories_disponibles=None):
         self.nom_categoria = nom_categoria
         self.confirmacio = confirmacio
+        self.categories_disponibles = categories_disponibles or []
         self.popup_messages = []  # Track popup messages for testing
 
     def input_popup(self, text, title, default_text=None):
+        """Not used in the new implementation"""
+        return None
+
+    def seleccionar_categoria(self, categories, missatge):
         """Return the predefined category name"""
         return self.nom_categoria
 
@@ -60,7 +65,7 @@ def test_eliminar_categoria_removes_existing_category():
     """Test that EliminarCategoria removes an existing category from the repository"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo()
-    ui = DirectUIForDelete("transport", confirmacio=True)
+    ui = DirectUIForDelete("transport", confirmacio=True, categories_disponibles=["alimentació", "transport", "habitatge"])
     cas_us = EliminarCategoria(fake_repo, ui)
 
     # --- Act ---
@@ -79,7 +84,7 @@ def test_eliminar_categoria_nonexistent_category():
     """Test that EliminarCategoria handles non-existent category appropriately"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo()
-    ui = DirectUIForDelete("categoria_inexistent", confirmacio=True)
+    ui = DirectUIForDelete("categoria_inexistent", confirmacio=True, categories_disponibles=["alimentació", "transport", "habitatge"])
     cas_us = EliminarCategoria(fake_repo, ui)
 
     # --- Act ---
@@ -94,7 +99,7 @@ def test_eliminar_categoria_last_category():
     """Test that EliminarCategoria works when removing the last category"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo({"única": ["paraula1", "paraula2"]})
-    ui = DirectUIForDelete("única", confirmacio=True)
+    ui = DirectUIForDelete("única", confirmacio=True, categories_disponibles=["única"])
     cas_us = EliminarCategoria(fake_repo, ui)
 
     # --- Act ---
@@ -109,7 +114,7 @@ def test_eliminar_categoria_case_sensitivity():
     """Test that EliminarCategoria handles case sensitivity correctly"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo({"Alimentació": ["supermercat", "fruits"]})
-    ui = DirectUIForDelete("alimentació", confirmacio=True)  # Different case
+    ui = DirectUIForDelete("alimentació", confirmacio=True, categories_disponibles=["Alimentació"])  # Different case
     cas_us = EliminarCategoria(fake_repo, ui)
 
     # --- Act ---
@@ -123,9 +128,10 @@ def test_eliminar_categoria_case_sensitivity():
 class DirectUI:
     """UI implementation that returns predefined values for testing direct execution"""
 
-    def __init__(self, nom_categoria, confirmacio=True):
+    def __init__(self, nom_categoria, confirmacio=True, categories_disponibles=None):
         self.nom_categoria = nom_categoria
         self.confirmacio = confirmacio
+        self.categories_disponibles = categories_disponibles or []
         self.call_count = 0
         self.popup_messages = []  # Track popup messages for testing
 
@@ -133,6 +139,10 @@ class DirectUI:
         """Return predefined values based on the call sequence"""
         # This method is not used for elimination, but we include it for consistency
         return None
+
+    def seleccionar_categoria(self, categories, missatge):
+        """Return the predefined category name"""
+        return self.nom_categoria
 
     def mostrar_popup(self, titol, text):
         """Track popup messages for testing purposes"""
@@ -152,7 +162,7 @@ def test_eliminar_categoria_removes_existing_category_through_ui():
     """Test that EliminarCategoria removes an existing category from the repository when using UI"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo()
-    ui = DirectUIForDelete("transport", confirmacio=True)
+    ui = DirectUIForDelete("transport", confirmacio=True, categories_disponibles=["alimentació", "transport", "habitatge"])
     cas_us = EliminarCategoria(fake_repo, ui)
 
     # --- Act ---
@@ -171,7 +181,7 @@ def test_eliminar_categoria_handles_cancelled_confirmation():
     """Test that EliminarCategoria handles cancelled confirmation appropriately"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo()
-    ui = DirectUI("transport", confirmacio=False)  # User cancelled
+    ui = DirectUI("transport", confirmacio=False, categories_disponibles=["alimentació", "transport", "habitatge"])  # User cancelled
     cas_us = EliminarCategoria(fake_repo, ui)
 
     # --- Act ---
@@ -186,16 +196,23 @@ def test_eliminar_categoria_handles_cancelled_confirmation():
 class MockUI:
     """Mock UI for testing that simulates the UI interaction"""
 
-    def __init__(self, nom_categoria_retorn=None, confirmacio_retorn=True):
+    def __init__(self, nom_categoria_retorn=None, confirmacio_retorn=True, categories_disponibles=None):
         self.nom_categoria_retorn = nom_categoria_retorn
         self.confirmacio_retorn = confirmacio_retorn
+        self.categories_disponibles = categories_disponibles or []
         self.input_calls = []  # To track calls to input_popup
+        self.seleccio_categoria_calls = []  # To track calls to seleccionar_categoria
         self.popup_messages = []  # Track popup messages for testing
         self.confirmation_calls = []  # Track confirmation calls
 
     def input_popup(self, text, title, default_text=None):
         """Simulate UI popup that gets user input"""
         self.input_calls.append((text, title, default_text))
+        return self.nom_categoria_retorn
+
+    def seleccionar_categoria(self, categories, missatge):
+        """Simulate UI category selection"""
+        self.seleccio_categoria_calls.append((categories, missatge))
         return self.nom_categoria_retorn
 
     def mostrar_popup(self, titol, text):
@@ -217,7 +234,11 @@ def test_eliminar_categoria_interacts_with_ui():
     """Test that EliminarCategoria interacts with UI to get user input and confirmation"""
     # --- Arrange ---
     fake_repo = FakeCategoriesRepo()
-    mock_ui = MockUI(nom_categoria_retorn="transport", confirmacio_retorn=True)
+    mock_ui = MockUI(
+        nom_categoria_retorn="transport",
+        confirmacio_retorn=True,
+        categories_disponibles=["alimentació", "transport", "habitatge"]
+    )
     cas_us = EliminarCategoria(fake_repo, mock_ui)
 
     # --- Act ---
@@ -226,7 +247,7 @@ def test_eliminar_categoria_interacts_with_ui():
     # --- Assert ---
     assert result is True  # Operation should succeed
     assert "transport" not in fake_repo.categories  # Category should be removed
-    assert len(mock_ui.input_calls) == 1  # One call to input_popup for category name
+    assert len(mock_ui.seleccio_categoria_calls) == 1  # One call to seleccionar_categoria
     assert len(mock_ui.confirmation_calls) == 1  # One call to confirm deletion
     assert len(mock_ui.popup_messages) == 1  # One success message
     assert mock_ui.popup_messages[0][0] == "Èxit"  # Title should be "Èxit"

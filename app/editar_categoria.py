@@ -12,17 +12,30 @@ class EditarCategoria:
     def execute(self):
         """
         Executa el cas d'ús per editar una categoria.
-        Demana a la UI el nom de la categoria i les paraules clau.
+        Demana a la UI que l'usuari seleccioni una categoria i llavors les paraules clau.
         """
-        # Demanar a la UI el nom de la categoria a editar
-        nom_categoria = self._ui.input_popup("Editar categoria:", "Editar Categoria")
+        # Obtenir totes les categories disponibles
+        categories = self._repositori_categories.get_all()
 
-        # Si no es proporciona un nom de categoria, no fem res
+        # Si no hi ha categories, no podem editar res
+        if not categories:
+            self._ui.mostrar_popup("Error", "No hi ha categories per editar.")
+            return
+
+        # Demanar a la UI que l'usuari seleccioni una categoria
+        nom_categoria = self._ui.seleccionar_categoria(list(categories.keys()), "Selecciona la categoria a editar:")
+
+        # Si no es selecciona cap categoria, no fem res
         if not nom_categoria:
             return
 
         # Demanar a la UI les noves paraules clau
-        paraules_clau_str = self._ui.input_popup("Editar paraules clau:", "Editar Paraules Clau")
+        # Si la categoria ja existeix, pre-omplim amb les paraules clau actuals
+        default_paraules = ""
+        if nom_categoria in categories:
+            default_paraules = ", ".join(categories[nom_categoria])
+
+        paraules_clau_str = self._ui.input_popup("Editar paraules clau:", "Editar Paraules Clau", default_text=default_paraules)
 
         # Processar la cadena de paraules clau en una llista
         if paraules_clau_str:

@@ -12,15 +12,23 @@ class EliminarCategoria:
     def execute(self):
         """
         Executa el cas d'ús per eliminar una categoria.
-        Demana a la UI el nom de la categoria i la confirmació de l'usuari.
+        Demana a la UI que l'usuari seleccioni una categoria i confirmeu l'acció.
 
         Returns:
             bool: True si la categoria s'ha eliminat correctament, False si no existia o si es va cancel·lar
         """
-        # Demanar a la UI el nom de la categoria a eliminar
-        nom_categoria = self._ui.input_popup("Eliminar categoria:", "Eliminar Categoria")
+        # Obtenir totes les categories disponibles
+        categories = self._repositori_categories.get_all()
 
-        # Si no es proporciona un nom de categoria, no fem res
+        # Si no hi ha categories, no podem eliminar res
+        if not categories:
+            self._ui.mostrar_popup("Error", "No hi ha categories per eliminar.")
+            return False
+
+        # Demanar a la UI que l'usuari seleccioni una categoria
+        nom_categoria = self._ui.seleccionar_categoria(list(categories.keys()), "Selecciona la categoria a eliminar:")
+
+        # Si no es selecciona cap categoria, no fem res
         if not nom_categoria:
             return False
 

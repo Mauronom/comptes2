@@ -62,16 +62,47 @@ class UIFreeSimpleGUI:
         import FreeSimpleGUI as sg
         sg.popup(titol, text)
 
-    def input_popup(self, text, title):
+    def input_popup(self, text, title, default_text=None):
         """Mostra un popup per demanar entrada d'usuari."""
         import FreeSimpleGUI as sg
-        return sg.popup_get_text(text, title=title)
+        return sg.popup_get_text(text, title=title, default_text=default_text)
 
     def confirmar_accio(self, missatge):
         """Mostra un diàleg de confirmació per a l'usuari."""
         import FreeSimpleGUI as sg
         resposta = sg.popup_yes_no(missatge)
         return resposta == "Yes"
+
+    def seleccionar_categoria(self, categories, missatge):
+        """Mostra un diàleg per permetre a l'usuari seleccionar una categoria."""
+        import FreeSimpleGUI as sg
+
+        if not categories:
+            sg.popup("Error", "No hi ha categories disponibles.")
+            return None
+
+        layout = [
+            [sg.Text(missatge)],
+            [sg.Listbox(values=categories, size=(30, 10), key="-SELECTED_CATEGORY-", bind_return_key=True)],
+            [sg.Button("Seleccionar"), sg.Button("Cancel·lar")]
+        ]
+
+        window = sg.Window("Seleccionar Categoria", layout, modal=True)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WINDOW_CLOSED or event == "Cancel·lar":
+                selected_category = None
+                break
+            elif event == "Seleccionar":
+                selected_list = values["-SELECTED_CATEGORY-"]
+                if selected_list:
+                    selected_category = selected_list[0]  # Get the first (and typically only) selected item
+                    break
+
+        window.close()
+        return selected_category
 
     def demanar_directori(self):
         """Demana a l’usuari el directori on hi ha els fitxers Norma43."""
