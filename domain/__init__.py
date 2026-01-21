@@ -1,4 +1,4 @@
-from .moviment import Moviment
+from .moviment import Moviment, assignar_categories_a_moviments
 from .repositori_moviments import RepositoriMoviments
 from .grafica import calcular_punts
 from .grafica import calcular_punts

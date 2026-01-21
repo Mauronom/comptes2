@@ -7,3 +7,4 @@ from .mostrar_categories import MostrarCategories
 from .afegir_categoria import AfegirCategoria
 from .editar_categoria import EditarCategoria
 from .eliminar_categoria import EliminarCategoria
+from .assignar_categories import AssignarCategories

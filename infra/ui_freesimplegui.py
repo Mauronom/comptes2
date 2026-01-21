@@ -113,7 +113,7 @@ class UIFreeSimpleGUI:
         # Si l’usuari cancel·la, retornem el path per defecte
         return directori or "infra/dades/"
 
-    def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments, cas_us_grafica_categories, cas_us_mostrar_categories=None, cas_us_afegir_categoria=None, cas_us_editar_categoria=None, cas_us_eliminar_categoria=None):
+    def set_casos_us(self, cas_us_grafica_balance, cas_us_grafica_imports, cas_us_filtrar_moviments, cas_us_grafica_categories, cas_us_mostrar_categories=None, cas_us_afegir_categoria=None, cas_us_editar_categoria=None, cas_us_eliminar_categoria=None, cas_us_assignar_categories=None):
         self._cas_us_grafica_balance = cas_us_grafica_balance
         self._cas_us_grafica_imports = cas_us_grafica_imports
         self._cas_us_filtrar_moviments = cas_us_filtrar_moviments
@@ -122,6 +122,7 @@ class UIFreeSimpleGUI:
         self._cas_us_afegir_categoria = cas_us_afegir_categoria
         self._cas_us_editar_categoria = cas_us_editar_categoria
         self._cas_us_eliminar_categoria = cas_us_eliminar_categoria
+        self._cas_us_assignar_categories = cas_us_assignar_categories
 
     def print(self, info):
         """Escriu al log (equivalent al print de Textual)."""
@@ -216,6 +217,9 @@ class UIFreeSimpleGUI:
             event, values = window.read()
 
             if event == sg.WIN_CLOSED or event == "-BTN_TANCAR-":
+                # Quan es tanca la finestra de categories, tornem a assignar categories als moviments
+                if hasattr(self, '_cas_us_assignar_categories') and self._cas_us_assignar_categories:
+                    self._cas_us_assignar_categories.execute()
                 break
             elif event == "-BTN_AFEGIR-":
                 # Executar el cas d'ús per afegir la categoria
